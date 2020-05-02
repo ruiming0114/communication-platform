@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
   thymeleaf:
     cache: false
@@ -10,3 +13,4 @@ spring:
 mybatis:
   type-aliases-package: com.rm.plat.pojo
   mapper-locations: classpath:mybatis/mapper/*.xml
+

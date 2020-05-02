@@ -18,21 +18,29 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User queryUserByID(int userid) {
-        return null;
+        return userMapper.queryUserByID(userid);
     }
 
     @Override
     public int addUser(User user) {
-        return 0;
+        userMapper.addUser(user);
+        return 1;
     }
 
     @Override
     public int updateUser(User user) {
-        return 0;
+        userMapper.updateUser(user);
+        return 1;
     }
 
     @Override
     public int deleteUser(int userid) {
-        return 0;
+        userMapper.deleteUser(userid);
+        return 1;
+    }
+
+    @Override
+    public int cnt() {
+        return userMapper.cnt();
     }
 }

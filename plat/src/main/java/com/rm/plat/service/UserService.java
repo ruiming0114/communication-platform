@@ -9,4 +9,6 @@ public interface UserService {
     int addUser(User user);
     int updateUser(User user);
     int deleteUser(int userid);
+
+    int cnt();
 }
