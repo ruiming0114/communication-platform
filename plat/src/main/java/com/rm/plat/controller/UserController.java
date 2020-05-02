@@ -13,7 +13,6 @@ public class UserController {
 
     @Autowired
     private UserMapper userMapper;
-
     @GetMapping("/queryUserList")
     public List<User> queryUserList(){
         List<User> userList = userMapper.queryUserList();
