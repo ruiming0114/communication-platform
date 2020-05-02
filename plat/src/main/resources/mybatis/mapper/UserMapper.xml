@@ -3,6 +3,10 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rm.plat.mapper.UserMapper">
+    <select id="queryUserByName" resultType="User" parameterType="String">
+        select * from mybatis.user where username = #{name}
+    </select>
+
     <select id="queryUserList" resultType="User">
         select * from user
     </select>
