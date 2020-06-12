@@ -1,0 +1,4 @@
+# communication-platform
+BUAA软工课程项目
+项目采用springboot框架编写
+源代码已经上传到master分支
