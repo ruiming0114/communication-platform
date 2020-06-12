@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+		<script src="https://unpkg.com/vue/dist/vue.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+        <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<style type="text/css" >
+	.el-header, .el-footer {
+	    background-color: #B3C0D1;
+	    color: #333;
+	    text-align: center;
+	    line-height: 60px;
+	  }
+	  .el-main {
+			display: block;
+	    background-color: #E9EEF3;
+	    color: #333;
+			min-height: 700px;	
+      }
+
+</style>
+
+</head>
+<body>
+<div id="app">
+		<!--实现导航栏的美工和跳转-->
+	<div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+	<div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+		<!--上方为话题内容的更大的展开页面，有“点赞”按钮和“举报”按钮，点击举报按钮，
+	下方为按页展开的评论，每个评论旁有一个“回应”按钮，点击“回应”按钮，
+	最下方为输入自己评论的输入框和一个“加上去”按钮。
+
+		-->
+		<div id = "box">
+			<el-container direction="vertical">
+				<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+					<h1 style="color: tomato; font-size:35px;margin-left: 5px; margin-top: 3px;">话 题 T o p i c</h1>
+				</el-header>
+				<el-main style="background-color: white;text-align: left;opacity: 0.95;">
+					
+                    <el-card class="box-card">
+                        <div class="text-item" >
+							<!--发布我的想法-->
+                              <h5 style="color: skyblue;">{{Comment.username}}</h5>
+							<div>
+							<el-image v-if="Comment.imgpath1!='no'"
+									  :lazy='true'
+									  style="width:600px;height: 600px;border-radius: 10px"
+									  :src="Comment.imgpath1">
+							</el-image>
+							<el-image v-if="Comment.imgpath2!='no'"
+									  :lazy='true'
+									  style="width:600px;height: 600px;border-radius: 10px"
+									  :src="Comment.imgpath2">
+							</el-image>
+							<el-image v-if="Comment.imgpath3!='no'"
+									  :lazy='true'
+									  style="width:600px;height: 600px;border-radius: 10px"
+									  :src="Comment.imgpath3">
+							</el-image>
+							<el-image v-if="Comment.imgpath4!='no'"
+									  :lazy='true'
+									  style="width:600px;height:600px;border-radius: 10px"
+									  :src="Comment.imgpath4">
+							</el-image>
+							</div>
+							<br>
+							<b>{{Comment.content}}</b>
+							<br>
+							<br>		{{Comment.addtime}}
+							<span style="margin-left: 900px">
+								<span th:if="${session.loginUser}!=null">
+									<span th:if="${liked}==0">
+										<el-button size="mini" v-show="attitude"  @click="like" class="el-icon-caret-top"> 点赞</el-button>
+									</span>
+									<span th:if="${liked}==1">
+										<el-button size="mini" v-show="attitude"  @click="Nolike" class="el-icon-caret-bottom"> 取消点赞</el-button>
+									</span>
+								</span>
+							点赞:{{Comment.LikeNum}}
+							</span>
+							<br>
+							<br>
+							<el-button size="medium"  @click="back" icon="el-icon-back"> 返回</el-button>
+							<input type="hidden" id="commentid" th:value="${currentcomment.commentid}">
+							<span th:if="${session.loginUser}!=null">
+								<input type="hidden" id="userid" th:value="${currentuserid}">
+							<el-button size="medium"  @click="show()" class="el-icon-chat-line-square"> 回复
+							</el-button>
+							</span>
+							<span th:if="${session.loginUser}==null">
+							<el-button size="medium"  @click="nologin" icon="el-icon-chat-line-square"> 回复
+								</el-button>
+							</span>
+							<span th:if="${session.loginUser}!=null">
+										<el-button size="medium" v-show="attitude"  @click="report" icon="el-icon-thumb"> 举报</el-button>
+							</span>
+							<span th:if="${session.loginUser}!=null">
+								<span th:if="${currentuserid}==${currentcomment.userid} or ${currentuserperms}=='admin'">
+								<el-button size="medium" @click="todelete" icon="el-icon-delete"> 删除</el-button>
+									</span>
+							</span>
+
+
+							<div id="div1" style="display:none">
+											<el-input style="width: 1170px; height: 40px; resize:none;" name="reply1" id="reply1" v-model="replyAdd" type="textarea" :rows="5">
+											</el-input>
+											<br>
+											<br>
+											<br>
+											<el-button style="margin-left: 1170px;margin-top: 8px" size="mini" @click="add" icon="el-icon-s-promotion"> 发表</el-button>
+										</div>
+						</div>
+						<br>
+
+						<div v-for="reply in replyList" >
+							<!--需要调用数据库数据-->
+							<el-card class="box-card">
+								<span style="color: skyblue">{{reply.username}}</span>
+								<div>
+									{{reply.content}}
+								</div>
+
+								<div id="action" style="float: right;">
+									<span th:if="${session.loginUser}!=null">
+										<span v-if="reply.userid==currentuserID ">
+												<el-button size="mini" @click="todeletereply(reply.commentreplyid)" icon="el-icon-delete"> 删除</el-button>
+										</span>
+										<span v-else>
+											<span th:if="${currentuserperms}=='admin'">
+												<el-button size="mini" @click="todeletereply(reply.commentreplyid)" icon="el-icon-delete"> 删除</el-button>
+											</span>
+										</span>
+									</span>
+									{{reply.addtime}}
+								</div>
+							</el-card>
+						</div>
+                      </el-card>
+					</el-card>
+                </el-main>
+			</el-container>
+			
+			
+		</div>
+	 
+</div>
+
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+        	currentuserID:[[${currentuserid}]],
+			input:'',
+			search_word: "",
+			attitude:true,
+			replyAdd:"",
+                Comment:{
+					  		topicid:[[${currentcomment.topicid}]],
+    							username:"[[${commentusername}]]",
+    							content:"[[${currentcomment.content}]]",
+								addtime:"[[${currentcomment.addtime}]]",
+									LikeNum:[[${currentcomment.likenum}]],
+							imgpath1:"[[${currentcomment.imgpath1}]]",
+					imgpath2:"[[${currentcomment.imgpath2}]]",
+					imgpath3:"[[${currentcomment.imgpath3}]]",
+					imgpath4:"[[${currentcomment.imgpath4}]]",
+    						},
+			replyList:[],
+			Users:[]
+            },
+            methods:{
+				add(){
+					if (this.replyAdd.length!=0){
+						alert("发布成功！");
+						var commentid = document.getElementById("commentid").value;
+						var userid= document.getElementById("userid").value;
+						document.getElementById("div1").style.display="none";
+						window.location.href="/addTopicCommentReply?commentid="+commentid+"&userid="+userid+"&content="+this.replyAdd;
+					}
+					else {
+						alert("输入内容不能为空！");
+					}
+				},
+				nologin(){
+					window.location.href='/toAdd_noLogin';
+				},
+				back(){
+					window.location.href='/topic/'+this.Comment.topicid;
+				},
+				show() {
+						var value = document.getElementById("div1").style.display;
+						if(value=="none")
+						{
+							document.getElementById("div1").style.display="block";
+						}
+						else
+							document.getElementById("div1").style.display="none";
+				},
+				like(){
+					var userid= document.getElementById("userid").value;
+					var commentid = document.getElementById("commentid").value;
+					window.location.href='/addTopicCommentLike?userid='+userid+'&commentid='+commentid;
+				},
+				Nolike(){
+					var userid= document.getElementById("userid").value;
+					var commentid = document.getElementById("commentid").value;
+					window.location.href='/deleteTopicCommentLike?userid='+userid+'&commentid='+commentid;
+				},
+				report(){
+					var commentid = document.getElementById("commentid").value;
+					window.location.href="/toAddTopicCommentReport/"+commentid;
+				},
+				todelete(){
+					var commentid = document.getElementById("commentid").value;
+					res=confirm("确认删除吗？所有与该内容相关的信息都会被删除，且无法恢复");
+					if (res==true){
+						alert("删除成功");
+						window.location.href='/deleteTopicComment?commentid='+commentid;
+					}
+				},
+				todeletereply(id){
+					res=confirm("确认删除吗？所有与该内容相关的信息都会被删除，且无法恢复");
+					if (res==true){
+						alert("删除成功");
+						window.location.href='/deleteTopicCommentReply?commentreplyid='+id;
+					}
+				}
+            },
+		created() {
+			const _this = this;
+			var commentid = document.getElementById("commentid").value;
+			axios.get('/queryTopicCommentReplyList_Userid_to_Username/' + commentid).then(function (resp) {
+						_this.Users = resp.data;
+					}
+			);
+			axios.get('/queryTopicCommentReplyList/'+commentid).then(function (resp) {
+						_this.replyList = resp.data;
+						for (var i = 0; i < _this.replyList.length; i++) {
+							_this.replyList[i].username = _this.Users[i].username;
+						}
+					}
+			);
+			console.log(this.replyList);
+		}
+        });
+</script>
+
+</body>
+</html>

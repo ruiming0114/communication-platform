@@ -1,0 +1,144 @@
+@import url(http://fonts.googleapis.com/css?family=Montserrat);
+body {
+    background-image: url("../background/LoginPage.jpg");
+    background-repeat: no-repeat;
+    background-size:cover;
+    background-attachment: fixed;
+    overflow-x: hidden;
+    font-family: montserrat, arial, verdana;
+    margin:0;
+}
+#login-box {
+    width: 800px;
+    height: 900px;
+    margin-left: 35%;/*边框四周距离*/
+    margin-top: 12%;/*上边距*/
+    margin-bottom: 20%;
+    text-align: center;/*内容居中*/
+    background-color: grey;
+    opacity: 0.7;
+    padding: 20px 50px;
+	position: relative;
+	
+}
+/*更换头像*/
+.aui-info {
+    position: relative;
+}
+
+ .fileInput{
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            display: block;
+          
+			width: 50px; 
+			height: 50px;
+            clear: both;
+            display: block;
+            margin: auto;
+            background-color: red;
+}
+
+/*注册页面的按钮款式*/
+.key {
+    font-size: 15px;
+    margin-left: 310px;
+}
+
+/*整个注册框的美工*/
+fieldset {
+	
+	background: white;
+	border: 0 none;
+	border-radius: 3px;
+	box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+	padding: 20px 30px;
+	box-sizing: border-box;
+	width: 650px;
+    margin: 0 10%;
+	position: relative;
+}
+
+#login-box fieldset:not(:first-of-type) {
+	display: none;
+}
+
+#login-box .form {
+    margin-top: 50px;
+    margin-right: 20px;
+	position: relative;
+}
+#login-box .form .action-button{
+	height: 50px;
+	width: 100px;
+    font-size: 20px;
+    padding: 5px;
+    margin-right: 80px;
+	margin-left: 80px;
+	position: relative;
+}
+
+#login-box .form input {
+    width: 250px;
+    height: 25px;
+    font-size: 18px;
+    border: 0;
+    border-bottom: 3px solid #000;
+    padding: 5px 25px;
+    background: #00000010;
+    margin-left: 10px;
+    background-color: white;
+    border-color: black;
+    margin-bottom: 5px;
+	
+}
+
+
+/*注册目录栏的美工*/
+#progressbar {
+	margin-bottom: 30px;
+	overflow: hidden;
+	counter-reset: step;
+}
+#progressbar li {
+	list-style-type: none;
+	color: white;
+	text-transform: uppercase;
+	font-size: 18px;
+	width: 33.33%;
+	float: left;
+	position: relative;
+}
+#progressbar li:before {/*圆圈标号部分*/
+	content: counter(step);
+	counter-increment: step;
+    width: 40px;
+	line-height: 40px;
+	display: block;
+	font-size: 18px;
+	color: #333;
+	background: white;
+    border-radius: 50%;
+	margin: 0 auto 8px auto;
+}
+#progressbar li:after {/*圆圈连线部分*/
+	content: '';
+	width: 100%;
+	height: 2px;
+	background: white;
+	position: absolute;
+	left: -50%;
+	top: 18px;
+	z-index: -1; 
+}
+#progressbar li:first-child:after {
+	content: none; 
+}
+#progressbar li.active:before,  #progressbar li.active:after{
+	background: #6C5C5C;
+	color: white;
+}

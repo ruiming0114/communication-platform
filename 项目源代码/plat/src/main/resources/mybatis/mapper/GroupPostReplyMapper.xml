@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.GroupPostReplyMapper">
+    <select id="queryGroupPostReplyById" resultType="GroupPostReply" parameterType="int">
+        select * from grouppostreply where grouppostreplyid = #{grouppostreplyid}
+    </select>
+
+    <select id="queryGroupPostReplyByGroupPost" resultType="GroupPostReply" parameterType="int">
+        select * from grouppostreply where grouppostid = #{grouppostid} order by addtime desc
+    </select>
+
+    <select id="queryGroupPostReplyByUser" resultType="GroupPostReply" parameterType="int">
+        select * from grouppostreply where userid = #{userid}
+    </select>
+
+    <insert id="addGroupPostReply" parameterType="GroupPostReply">
+        insert into grouppostreply(grouppostreplyid,grouppostid,userid,content,addtime) values(#{grouppostreplyid},#{grouppostid},#{userid},#{content},#{addtime})
+    </insert>
+
+    <update id="updateGroupPostReply" parameterType="GroupPostReply">
+        update grouppostreply set grouppostid=#{grouppostid},userid=#{userid},content=#{content},addtime=#{addtime} where grouppostreplyid=#{grouppostreplyid}
+    </update>
+
+    <delete id="deleteGroupPostReply" parameterType="int">
+        delete from grouppostreply where grouppostreplyid=#{grouppostreplyid}
+    </delete>
+
+    <select id="cnt" resultType="int">
+        select count(*) from grouppostreply
+    </select>
+
+    <select id="max" resultType="int">
+        select ifnull(max(grouppostreplyid),0) from grouppostreply
+    </select>
+
+
+    <select id="cntByGroupPost" parameterType="int" resultType="int">
+        select count(*) from grouppostreply where grouppostid=#{grouppostid}
+    </select>
+</mapper>

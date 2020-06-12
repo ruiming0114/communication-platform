@@ -1,0 +1,77 @@
+@import url(http://fonts.googleapis.com/css?family=Montserrat);
+body {
+    background-image: url("../background/LoginPage.jpg");
+    background-repeat: no-repeat;
+    background-size:cover;
+    background-attachment: fixed;
+    overflow-x: hidden;
+    font-family: montserrat, arial, verdana;
+    margin:0;
+}
+#login-box {
+    width: 800px;
+    height: 600px;
+    margin-left: 35%;/*边框四周距离*/
+    margin-top: 12%;/*上边距*/
+    margin-bottom: 20%;
+    text-align: center;/*内容居中*/
+    background-color: grey;
+    opacity: 0.7;
+    padding: 20px 50px;
+	position: relative;
+	
+}
+/*注册页面的按钮款式*/
+.key {
+    font-size: 15px;
+    margin-left: 310px;
+}
+/*整个注册框的美工*/
+
+fieldset {
+	
+	background: white;
+	border: 0 none;
+	border-radius: 3px;
+	box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+	padding: 20px 30px;
+	box-sizing: border-box;
+	width: 650px;
+    margin: 0 10%;
+	position: relative;
+}
+
+#login-box fieldset:not(:first-of-type) {
+	display: none;
+}
+
+#login-box .form {
+    margin-top: 50px;
+    margin-right: 20px;
+	position: relative;
+}
+#login-box .form .action-button{
+	height: 50px;
+	width: 100px;
+    font-size: 20px;
+    padding: 5px;
+    margin-right: 80px;
+	margin-left: 80px;
+	position: relative;
+}
+
+#login-box .form input {
+    width: 250px;
+    height: 25px;
+    font-size: 18px;
+    border: 0;
+    border-bottom: 3px solid #000;
+    padding: 5px 25px;
+    background: #00000010;
+    margin-left: 10px;
+    background-color: white;
+    border-color: black;
+    margin-bottom: 5px;
+	
+}
+

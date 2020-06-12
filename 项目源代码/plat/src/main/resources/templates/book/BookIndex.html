@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+	<meta name="referrer" content="no-referrer"/>
+    <title>书荫光影-书虫影迷聚集地</title>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+<style type="text/css" >
+	.el-header, .el-footer {
+	    background-color: #B3C0D1;
+	    color: #333;
+	    text-align: center;
+	    line-height: 60px;
+	  }
+	  .el-main {
+			display: block;
+	    background-color: #E9EEF3;
+	    color: #333;
+			min-height: 700px;	
+	  }
+</style>
+
+</head>
+<body style="margin: 0;">
+<div id="app">
+	<div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+	<div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+	<div id = "box">
+		<el-container direction="vertical">
+			<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+				<h1 style="color: teal; font-size:35px;margin-left: 5px; margin-top: 3px;">图 书 B o o k
+				<span style="margin-left: 580px;">
+					<el-input
+							placeholder="搜索书籍"
+							v-model="input1"
+							style="width: 300px;height: 10px">
+					<el-button slot="append" icon="el-icon-search" @click="searchbook"></el-button>
+				</el-input>
+				</span>
+				</h1>
+			</el-header>
+			<el-main style="background-color: white;text-align: left;opacity: 0.95;margin-top: 2px">
+				<div id="forms">
+					<div id="hot" style="width: 1000px;" >
+						<p style="margin-left: 0px;font-size: 150%;">
+							热门书籍
+						</p>
+			    <el-table :data="hotBooks"
+			         style="width: 100%; opacity:0.85;margin-left: 100px;"
+			    		 max-height="340px">
+
+					<el-table-column label="封面图片" width="150px">
+						<template slot-scope="scope">
+							<el-image
+									style="width: 80px; height: 120px"
+									:src="scope.row.bookimgpath"
+									:preview-src-list="srcList">
+							</el-image>
+						</template>
+					</el-table-column>
+
+					<el-table-column prop="bookid" width="150px" v-if="show">
+
+					</el-table-column>
+
+					<el-table-column prop="bookname" label="书名" width="200px">
+
+					</el-table-column>
+
+					<el-table-column prop="author" label="作者" width="200px">
+
+					</el-table-column>
+
+					<el-table-column prop="totalscore" label="得分" width="150px">
+
+					</el-table-column>
+					<el-table-column  width="150px" prop="bookid">
+						<template slot-scope="scope">
+							<el-button size="mini" @click="go(scope.row)" class="el-icon-reading"> 查看</el-button>
+
+						</template>
+					</el-table-column>
+			    　　</el-table>
+
+			</div>
+
+			   <div id="recommended" style="width: 1000px;" >
+				   <p style="margin-left: 0px;font-size: 150%;">
+					  为你推荐
+				   </p>
+			      <el-table :data="recommendedBooks"
+			           style="width: 100%; opacity:0.85;margin-left: 100px;"
+			      		 max-height="340px">
+					  <el-table-column label="封面图片" width="150px">
+						  <template slot-scope="scope">
+						  <el-image
+								  style="width: 80px; height: 120px"
+								  :src="scope.row.bookimgpath"
+								  :preview-src-list="srcList">
+						  </el-image>
+						  </template>
+					  </el-table-column>
+
+					  <el-table-column prop="bookid" width="150px" v-if="show">
+
+					  </el-table-column>
+
+					  <el-table-column prop="bookname" label="书名" width="200px">
+
+					  </el-table-column>
+
+					  <el-table-column prop="author" label="作者" width="200px">
+
+					  </el-table-column>
+
+					  <el-table-column prop="totalscore" label="得分" width="150px">
+
+					  </el-table-column>
+					  <el-table-column  width="150px" prop="bookid">
+						  <template slot-scope="scope">
+							  <el-button size="mini" @click="go(scope.row)" class="el-icon-reading"> 查看</el-button>
+						  </template>
+					  </el-table-column>
+					  　　</el-table>
+			    </div>
+					</div>
+			</el-main>
+		</el-container>
+    
+</div>
+
+<script type="text/javascript">
+
+    const vm = new Vue({
+        el:'#app',
+        data:{
+        	show: false,
+			input:'',
+			input1:'',
+            hotBooks: [],
+			recommendedBooks: []
+        },
+		methods:{
+			go(row) {
+				window.location.href="/book/"+row.bookid;
+			},
+			searchbook(){
+				var s = this.input1;
+				if (s.length==0){
+					alert("请输入搜索内容");
+				}
+				else {
+					window.location.href='/checkBook/'+s;
+				}
+			}
+		},
+		created(){
+        	const _this=this;
+			axios.get('/queryHotBookList',{}).then(function (resp) {
+						_this.hotBooks=resp.data;
+					}
+			);
+			axios.get('/queryRecommendBookList',{}).then(function (resp) {
+						_this.recommendedBooks=resp.data;
+					}
+			);
+		}
+
+	});
+
+</script>
+</body>
+</html>

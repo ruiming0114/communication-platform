@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.GroupAdminApplyMapper">
+    <select id="queryGroupAdminApplyById" resultType="GroupAdminApply" parameterType="int">
+        select * from groupadminapply where applyid=#{applyid}
+    </select>
+
+    <select id="queryGroupAdminApplyByGroup" resultType="GroupAdminApply" parameterType="int">
+        select * from groupadminapply where groupid = #{groupid}
+    </select>
+
+    <select id="queryUndealGroupAdminApplyByGroup" resultType="GroupAdminApply" parameterType="int">
+        select * from groupadminapply where groupid = #{groupid} and deal=0 order by addtime desc
+    </select>
+
+    <select id="queryGroupAdminApplyByUser" resultType="GroupAdminApply" parameterType="int">
+        select * from groupadminapply where userid = #{userid}
+    </select>
+
+
+    <insert id="addGroupAdminApply" parameterType="GroupAdminApply">
+        insert into groupadminapply(applyid,groupid,userid,addtime,application,deal) values(#{applyid},#{groupid},#{userid},#{addtime},#{application},#{deal})
+    </insert>
+
+    <update id="updateGroupAdminApply" parameterType="GroupAdminApply">
+        update groupadminapply set groupid=#{groupid},userid=#{userid},addtime=#{addtime},application=#{application},deal=#{deal} where applyid=#{applyid}
+    </update>
+
+    <delete id="deleteGroupAdminApply" parameterType="int">
+        delete from groupadminapply where applyid=#{applyid}
+    </delete>
+
+    <select id="cnt" resultType="int">
+        select count(*) from groupadminapply
+    </select>
+
+    <select id="max" resultType="int">
+        select ifnull(max(applyid),0) from groupadminapply
+    </select>
+</mapper>

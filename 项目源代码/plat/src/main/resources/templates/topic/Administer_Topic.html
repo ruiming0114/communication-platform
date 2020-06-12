@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+            <script src="https://unpkg.com/vue/dist/vue.js"></script>
+            <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+            <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+    <style type="text/css" >
+    	#content{
+		.el-header, .el-footer {
+			background-color: #B3C0D1;
+			color: #333;
+			text-align: center;
+			line-height: 60px;
+		}
+		.el-main {
+			display: block;
+			background-color: #E9EEF3;
+			color: #333;
+			min-height: 700px;
+		}
+
+		}
+    </style>
+    
+    </head>
+    <body style="margin: 0;">
+    <div id="app">
+		<div th:insert="~{commons/common::topbar-login}"></div>
+
+		<div id = "box">
+		<el-container direction="vertical">
+			<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+				<h1 style="color: tomato; font-size:35px;margin-left: 5px; margin-top: 3px;">话 题 T o p i c</h1>
+			</el-header>
+					<el-main style="background-color: white;text-align: left;opacity: 0.95;">
+						<div id="forms">
+							<div id="content">
+    			<span style="margin-left: 10px;margin-top:10px;font-size:130%;">话题列表</span>
+    			  <div class="block">
+					  <br>
+    			  <el-table :data="Topics"
+    			       style="min-height: 600px;">
+					  <el-table-column prop="topicid" width="150px" v-if="show">
+
+					  </el-table-column>
+    			        <el-table-column prop="title" label="话题标题" width="200px">
+    			  			</el-table-column>
+    			  			<el-table-column prop="intro" label="话题简介" width="500px">
+    			  			</el-table-column>
+    							<el-table-column prop="classify" label="话题分类" width="150px">
+    							</el-table-column>
+    			  			<el-table-column  width="100px">
+    			  				<template slot-scope="scope">
+										<el-button size="mini" @click="go(scope.row)" icon="el-icon-monitor"> 查看</el-button>
+    			  				</template>
+    			  			</el-table-column>
+    							<el-table-column  width="100px">
+										<template slot-scope="scope">
+											<el-button size="mini" @click="toDelete(scope.row)" icon="el-icon-delete"> 删除</el-button>
+										</template>
+    							</el-table-column>
+    			  　　</el-table>
+					  <el-pagination
+							  style="margin-left: 350px;"
+							  @size-change="size"
+							  @current-change="page"
+							  :current-page="currentPage"
+							  :page-size="pageSize"
+							  :page-sizes="[4,10,20]"
+							  layout="total, sizes, prev, pager, next, jumper"
+							  :total="total">
+					  </el-pagination>
+    			  </div>
+							</div>
+        <footer>
+    			
+    		</footer>
+    </div>
+					</el-main>
+		</el-container>
+		</div>
+	</div>
+
+    
+    <script type="text/javascript">
+        const vm = new Vue({
+            el:'#app',
+            data: {
+				async: false,
+				input: '',
+				total: [[${total_size}]],
+    					// 当前页面只显示我的书评
+    					  UserID:"",
+				currentPage:1,
+				pageSize:10,
+				Topics:[],
+                search_word: "",
+            },
+            methods:{
+				go(row) {
+					window.location.href="/topic/"+row.topicid;
+				},
+				toDelete(row){
+					var res = confirm("确认删除吗？所有与该话题相关的信息都会被删除，且无法恢复");
+					if (res==true){
+						alert("删除成功");
+						window.location.href="/deleteTopic_Admin?topicid="+row.topicid;
+					}
+				},
+				async page(currentPage) {
+					this.currentPage = currentPage;
+
+					const _this=this;
+					await axios.get('/queryTopicListInPage/'  + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+								_this.Topics = resp.data;
+							}
+					);
+				},
+				async size(pageSize) {
+
+					this.pageSize = pageSize;
+					const _this=this;
+					await axios.get('/queryTopicListInPage/'  + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+								_this.Topics = resp.data;
+							}
+					);
+				},
+            },
+			async created(){
+
+            	const _this=this;
+				await axios.get('/queryTopicListInPage/' + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+							_this.Topics = resp.data;
+						}
+				);
+			}
+    
+        });
+    </script>
+    </body>
+    </html>

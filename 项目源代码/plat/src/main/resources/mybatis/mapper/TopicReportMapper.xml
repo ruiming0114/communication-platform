@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.TopicReportMapper">
+    <select id="queryTopicReportById" resultType="TopicReport" parameterType="int">
+        select * from topicreport where topicreportid=#{topicreportid}
+    </select>
+
+    <select id="queryTopicReportList" resultType="TopicReport">
+        select * from topicreport order by deal asc
+    </select>
+
+    <select id="queryUndealTopicReportList" resultType="TopicReport">
+        select * from topicreport where deal=0;
+    </select>
+
+    <select id="queryTopicReportListByUser" resultType="TopicReport" parameterType="int">
+        select * from topicreport where userid=#{userid}
+    </select>
+
+    <insert id="addTopicReport" parameterType="TopicReport">
+        insert into topicreport(topicreportid,topicid,userid,title,content,addtime,deal) values (#{topicreportid},#{topicid},#{userid},#{title},#{content},#{addtime},#{deal})
+    </insert>
+
+    <update id="updateTopicReport" parameterType="TopicReport">
+        update topicreport set topicid=#{topicid},userid=#{userid},title=#{title},content=#{content},addtime=#{addtime},deal=#{deal} where topicreportid=#{topicreportid}
+    </update>
+
+    <delete id="deleteTopicReport" parameterType="int">
+        delete from topicreport where topicreportid=#{topicreportid}
+    </delete>
+
+    <select id="cnt" resultType="int">
+        select count(*) from topicreport
+    </select>
+
+    <select id="max" resultType="int">
+        select ifnull(max(topicreportid),0) from topicreport
+    </select>
+
+    <select id="queryTopicReportByTopic" parameterType="int" resultType="TopicReport">
+        select * from topicreport where topicid=#{topicid}
+    </select>
+
+</mapper>

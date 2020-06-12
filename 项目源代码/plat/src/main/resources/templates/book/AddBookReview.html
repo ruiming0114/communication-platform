@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="referrer" content="no-referrer"/>
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+    <style type="text/css" >
+        .el-header, .el-footer {
+            background-color: #B3C0D1;
+            color: #333;
+            text-align: center;
+            line-height: 60px;
+        }
+        .el-main {
+            display: block;
+            background-color: #E9EEF3;
+            color: #333;
+            min-height: 700px;
+        }
+
+    </style>
+
+   
+   </head>
+   <body style="margin: 0;">
+   <div id="app">
+       <div th:insert="~{commons/common::topbar-login}"></div>
+
+       <div id = "box">
+           <el-container direction="vertical">
+               <el-header style="background-color: white;text-align: left;opacity: 0.95;">
+                   <h1 style="color: teal; font-size:35px;margin-left: 5px; margin-top: 3px;">图 书 B o o k</h1>
+               </el-header>
+               <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                   <div id="forms">
+
+   			<el-form :model="BookReview" :rules="rules" ref="BookReview" label-width="100px" class="demo-ruleForm" >
+   				<el-form-item  style="width: 1000px;margin-left: 0px;">
+                    <input type="hidden" id="bookid" th:value="${bookid}"/>
+                    <input type="hidden" id="userid" th:value="${session.loginUser.userid}"/>
+   				<span style="font-size: 150%;margin-left: 0px;">添加书评</span>
+
+   			  <el-form-item label="书评标题" prop="Title" style="margin: 10px;margin-bottom: 15px;" >
+   			    <el-input v-model="BookReview.Title"></el-input>
+   					</el-form-item>
+   			  <el-form-item label="书评内容" prop="content" style="margin: 10px;">
+   			    <el-input type="textarea" v-model="BookReview.content" rows="20" ></el-input>
+   			  </el-form-item>
+   			  <el-form-item style="margin-left: 350px;">
+   			    <el-button type="mini" @click="submitForm('BookReview')" class="myButton" style="color: white;">发表书评</el-button>
+   			  </el-form-item>
+   			</el-form>
+       </div>
+               </el-main>
+           </el-container>
+   </div>
+
+   <script type="text/javascript">
+       const vm = new Vue({
+           el:'#app',
+           data: {
+               input:'',
+               show: false,
+               search_word: "",
+               BookReview:{
+   							Title:"",
+   							content:""
+   						},
+   						rules:{
+   							Title:[
+   								{ required: true, message: '请输入书评标题', trigger: 'blur' }
+   								],
+   						  content:[
+   								{ required: true, message: '请填写书评内容', trigger: 'blur' },
+   								{ min: 25,message: '内容少于25字', trigger: 'blur' }
+   								],
+   						}
+           },
+           methods:{
+               submitForm(formName) {
+                       this.$refs[formName].validate((valid) => {
+                         if (valid) {
+                           alert('添加成功!');
+                           const title=this.BookReview.Title;
+                           const content=this.BookReview.content;
+                           const bookid=document.getElementById("bookid");
+                           const userid=document.getElementById("userid");
+                           window.location.href="/AddBookReview?userid="+userid.value+"&bookid="+bookid.value+"&title="+title+"&content="+content;
+                         } else {
+                           console.log('添加失败!');
+                           return false;
+                         }
+                       });
+                     },
+           },
+       });
+   </script>
+   </body>
+   </html>

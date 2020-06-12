@@ -1,0 +1,121 @@
+body {
+    background-image: url("../background/LoginPage.jpg");
+    background-repeat: no-repeat;
+    background-size:cover;
+    background-attachment: fixed;
+    overflow-x: hidden;
+    margin: 0;
+}
+#login-box {
+    width: 500px;
+    height: auto;
+    margin-left: 42px;/*边框四周距离*/
+    margin-top: 11%;/*上边距*/
+    margin-bottom: 20%;
+    text-align: center;/*内容居中*/
+    background-color: grey;
+    opacity: 0.7;
+    padding: 20px 50px;
+}
+#login-box .form .item {
+    margin-top: 50px;
+    margin-right: 20px;
+}
+#login-box .form .item i {
+    font-size: 25px;
+    padding: 5px;
+    margin-right: 1px;
+}
+#login-box .form .item input {
+    width: 250px;
+    height: 25px;
+    font-size: 18px;
+    border: 0;
+    border-bottom: 3px solid #000;
+    padding: 5px 25px;
+    background: #00000010;
+    margin-left: 10px;
+    background-color: gray;
+    border-color: black;
+    margin-bottom: 5px;
+}
+.key {
+    font-size: 15px;
+    margin-left: 310px;
+}
+.myButton {
+    box-shadow: 0px 10px 14px -7px #a6827e;
+    background: linear-gradient(to bottom, #7d5d3b 5%, #634b30 100%);
+    background-color: #7d5d3b;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 13px 32px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #4d3534;
+    margin-top: 50px;
+    margin-right: 46px;
+    margin-left: 43px;
+}
+.myButton:hover {
+    background: linear-gradient(to bottom, #634b30 10%, #7d5d3b 100%);
+    background-color: #634b30;
+}
+.myButton:active {
+    position: center;
+}
+/*导航栏美工设计*/
+body, ul, li, a {
+    padding: 0;
+    margin: 0;
+}
+body {
+    margin-top: 0px;
+    background-color: #e6e6e6;
+    color: #fff;
+}
+.menu {
+    font-size: 2;
+    padding: 0px;
+    height: 50px;
+    padding-left: 67%;
+    background-color: #3E3333;
+    position: relative;
+    width: 200%;
+}
+.menubar {
+    margin: 0 auto;
+    position: absolute;
+    list-style-type: none;
+    width: 100%;
+    overflow-y: auto;
+    margin-left: 10px;
+}
+.menubar li {
+    padding: 0px 3px;
+    display: inline-block;
+    cursor: pointer;
+    line-height: 50px;
+    margin-left: 0px;
+    padding-left: 2%;
+    padding-right: 2%;
+}
+.menubar li:hover {
+    background-color: #6C5C5C;
+}
+.menubar li.menu-value {
+    background-color: #6C5C5C;
+}
+.menubar a {
+    display: block;
+    height: 50px;
+    font-family: "微软雅黑", "Microsoft Yahei", "Hiragino Sans GB", tahoma, arial, "宋体";
+    font-size: 15px;
+    text-align: right;
+    text-decoration: none;
+    color: #fff;
+}

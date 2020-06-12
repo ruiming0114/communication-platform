@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+   <script src="https://unpkg.com/vue/dist/vue.js"></script>
+   <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+   <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+   <style type="text/css" >
+   .el-header, .el-footer {
+	 background-color: #B3C0D1;
+	 color: #333;
+	 text-align: center;
+	 line-height: 60px;
+	 }
+	 .el-main {
+	   display: block;
+	 background-color: #E9EEF3;
+	 color: #333;
+	   min-height: 700px;	
+	 }
+ 
+ </style>
+
+</head>
+<body style="margin: 0;">
+<div id="app">
+
+	<div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+	<div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+	<input type="hidden" id="name" th:value="${name}">
+		<div id = "box">
+			<el-container direction="vertical">
+				<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+					<h1 style="color: violet;font-size:35px;margin-left: 5px; margin-top: 3px;">小 组 G r o u p</h1>
+				</el-header>
+                <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                    <div id="forms">
+						<span style="font-size: 150%; margin-left: 0px;">搜索结果</span>
+					</br>
+						<div id="result" v-if="isSearch">
+							<div class="block">
+							<el-table :data="result"
+								 style="width: 1000px;margin-left: 100px;min-height: 600px;"
+									 >
+								<el-table-column prop="groupid" width="150px" v-if="show">
+								</el-table-column>
+								  <el-table-column prop="groupname" label="小组名" width="300px">
+										</el-table-column>
+										<el-table-column prop="intro" label="小组简介" width="500px">
+										</el-table-column>
+											<el-table-column  width="150px">
+												<template slot-scope="scope">
+													<el-button size="mini" @click="toGroup(scope.row)" class="el-icon-monitor"> 查看</el-button>
+												</template>
+											</el-table-column>
+							　　</el-table>
+								<el-pagination
+										style="margin-left: 300px;"
+										@size-change="size"
+										@current-change="page"
+										:current-page="currentPage"
+										:page-size="pageSize"
+										:page-sizes="[4,10,20]"
+										layout="total, sizes, prev, pager, next, jumper"
+										:total="total">
+								</el-pagination>
+							</div>
+						</div>
+						<div v-else style="text-align: center;margin-top: 200px;">
+							<p>查询结果为空，试着搜搜其他吧</p>
+						</div>
+                    
+                    </div>
+                </el-main>
+			</el-container>
+			
+			
+		</div>
+    
+</div>
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+        	show:false,
+        	input:'',
+			async:false,
+					  activeIndex2:1,
+					  isSearch:true,
+			total: [[${total_size}]],
+			pageSize:4,
+			currentPage: 1,
+            search_word: "",
+						<!-- 从Group,GroupPost表中提取数据 -->
+            result:[
+							{
+								Name:'group1',
+								Intro:'the best'
+						}
+						]
+        },
+        methods:{
+        	toGroup(row){
+        		window.location.href="/group/"+row.groupid;
+			},
+			async page(currentPage) {
+				var name = document.getElementById("name").value;
+				this.currentPage = currentPage;
+				const _this = this;
+				axios.get('/queryGroupByName/'+name+'/'+_this.currentPage+'/'+_this.pageSize).then(function (resp) {
+							console.log(resp.data);
+							_this.result = resp.data;
+						}
+				);
+			},
+			async size(pageSize) {
+				var name = document.getElementById("name").value;
+				this.pageSize = pageSize;
+				const _this = this;
+				axios.get('/queryGroupByName/'+name+'/'+_this.currentPage+'/'+_this.pageSize).then(function (resp) {
+							console.log(resp.data);
+							_this.result = resp.data;
+						}
+				);
+			}
+		},
+		created(){
+			var name = document.getElementById("name").value;
+			const _this = this;
+			axios.get('/queryGroupByName/'+name+'/'+_this.currentPage+'/'+_this.pageSize).then(function (resp) {
+						console.log(resp.data);
+						_this.result = resp.data;
+					}
+			);
+		}
+
+    });
+</script>
+</body>
+</html>

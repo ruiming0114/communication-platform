@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+	<meta name="referrer" content="no-referrer"/>
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+            <script src="https://unpkg.com/vue/dist/vue.js"></script>
+            <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+			<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style type="text/css" >
+
+    </style>
+    
+    </head>
+    <body style="margin: 0;">
+    <div id="app">
+		<div th:insert="~{commons/common::topbar-login}"></div>
+
+		   <div id = "box">
+			<el-container direction="vertical">
+				<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+					<h1 style="color:yellowgreen;font-size:35px;margin-left: 5px; margin-top: 3px;">影 视 V i d e o</h1>
+				</el-header>
+                <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                    <div id="forms">
+						<div id="content">
+							<span style="margin-left: 0px;margin-top:10px;font-size:150%;">影视列表</span>
+							<span>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							</span>
+							<el-button size="mini" @click="toAdd" class="el-icon-circle-plus-outline"> 添加影视</el-button>
+							</br>
+							  <div class="block" style="width: 1100px;">
+							</br>
+							  <el-table :data="Videos"
+								   style="min-height: 600px; margin-left: 20px;">
+											 <el-table-column  label="封面图片" width="150px">
+												 <template slot-scope="scope">
+													 <el-image
+															 style="width: 80px; height: 120px"
+															 :src="scope.row.videoimgpath"
+															 :preview-src-list="srcList">
+													 </el-image>
+												 </template>
+												 </el-table-column>
+								  <el-table-column prop="videoid" width="150px" v-if="show">
+								  </el-table-column>
+									<el-table-column prop="videoname" label="剧名" width="150px">
+										  </el-table-column>
+										  <el-table-column prop="director" label="导演" width="150px">
+										  </el-table-column>
+										  <el-table-column prop="country" label="制片国家" width="150px">
+										  </el-table-column>
+											<el-table-column prop="totalscore" label="得分" width="150px">
+											</el-table-column>
+								  <el-table-column  width="100px">
+									  <template slot-scope="scope">
+										  <el-button size="mini" @click="toEdit(scope.row)" class="el-icon-edit"> 编辑</el-button>
+									  </template>
+								  </el-table-column>
+								  <el-table-column  width="100px">
+									  <template slot-scope="scope">
+										  <el-button size="mini" @click="toDelete(scope.row)" class="el-icon-delete"> 删除</el-button>
+									  </template>
+								  </el-table-column>
+							  　　</el-table>
+								  <el-pagination
+										  style="margin-left: 300px;"
+										  @size-change="size"
+										  @current-change="page"
+										  :current-page="currentPage"
+										  :page-size="pageSize"
+										  :page-sizes="[4,10,20]"
+										  layout="total, sizes, prev, pager, next, jumper"
+										  :total="total">
+								  </el-pagination>
+							  </div>
+					</div>
+					<footer>
+							
+						</footer>
+                    
+                    </div>
+                </el-main>
+			</el-container>
+			
+			
+		</div>
+        
+    </div>
+    
+    <script type="text/javascript">
+        const vm = new Vue({
+            el:'#app',
+            data: {
+            	input:"",
+				show: false,
+				async: false,
+				total: [[${total_size}]],
+				currentPage:1,
+				pageSize:10,
+				Videos:[
+					{	videoid:"",
+						videoname:"",
+						director:"",
+						country:"",
+						totalscore:5,
+					}
+				],
+                search_word: "",
+            },
+            methods:{
+				toAdd(){
+					window.location.href="/toAddVideo";
+				},
+				toEdit(row){
+					window.location.href="/toEditVideo/"+row.videoid;
+				},
+				toDelete(row) {
+					var res = confirm("确认删除吗？所有与影视相关的信息都会被删除，且无法恢复");
+					if (res == true) {
+						alert("删除成功");
+						window.location.href = "/DeleteVideo/" + row.videoid;
+					}
+				},
+				async page(currentPage) {
+					this.currentPage = currentPage;
+					const _this = this;
+					axios.get('/queryVideoListInPage/' + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+								console.log(resp.data);
+								_this.Videos = resp.data;
+							}
+					);
+				},
+				async size(pageSize) {
+					this.pageSize = pageSize;
+					const _this = this;
+					axios.get('/queryVideoListInPage/' + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+								console.log(resp.data);
+								_this.Videos = resp.data;
+							}
+					);
+				}
+            },
+			created(){
+				const _this = this;
+				axios.get('/queryVideoListInPage/'+_this.currentPage+'/'+_this.pageSize).then(function (resp) {
+							console.log(resp.data);
+							_this.Videos = resp.data;
+						}
+				);
+			}
+    
+        });
+    </script>
+    </body>
+    </html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+	<meta name="Generator" content="EditPlus">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>书荫光影-书虫影迷聚集地</title>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<link rel="stylesheet" th:href="@{/css/Info.css}"/>
+</head>
+<body style="width:500px";>
+<!--个人信息表，点击按钮进入修改信息界面-->
+<div id="app">
+<!--导航栏，跳转到不同的分页面-->
+	<div th:insert="~{commons/common::topbar-login}"></div>
+</div>
+
+
+
+<!-- 侧向导航栏 -->
+<div id="app1">
+	
+<el-container>
+	<div th:insert="~{commons/common::sidebar}"></div>
+<!--个人信息做一个展示，需要连接数据库显示具体信息-->
+<div id="show">
+<div id="forms">
+	<h2>个人信息</h2>
+	<h3>你好，<span th:text="${session.loginUser.username}"></span>！</h3>
+
+	<form th:action="@{/alterInfo}" method="post" onsubmit="f()">
+		<input type="hidden" name="username" th:value="${session.loginUser.username}">
+	<h3>邮箱：</h3>
+		<input type="email" name="email" id="email" th:value="${session.loginUser.email}" required="required" size="30"/>
+	<h3>性别：</h3>
+		<label for="male">
+		<input name="sex" id="male" style="width: 20px;height: 20px; vertical-align: middle;" type="radio" th:checked="${session.loginUser.sex}==0" value="0"/>    男
+		</label>
+		&nbsp;		&nbsp;		&nbsp;		&nbsp;		&nbsp;
+		<label for="female">
+		<input name="sex" id="female" style="width: 20px;height: 20px; vertical-align: middle;" type="radio" th:checked="${session.loginUser.sex}==1" value="1"/>    女
+		</label>
+	<h3>生日：</h3>
+		<input type="date" name="birthday" id="birthday" th:value="${session.loginUser.birthday}" size="30"/>
+	<h3>个性签名：</h3>
+		<input type="text"name="signature" id="signature" th:value="${session.loginUser.signature}" size="30"/>
+	<h3>安全问题：</h3>
+		<input type="text" name="securityQ" id="securityQ" th:value="${session.loginUser.securityQ}" required="required" size="30"/>
+	<h3>问题答案：</h3>
+		<input type="text" name="securityA" id="securityA" th:value="${session.loginUser.securityA}" required="required" size="30"/>
+		<div>
+			<h3><a th:href="@{/toAlterPassword}">修改密码?点击此处</a></h3>
+		</div>
+		<input type="submit" class="myButton" value="提 交 修 改">
+	</form>
+	<script>
+		function f() {
+			alert("修改成功，请重新登录");
+		}
+	</script>
+
+
+</div>
+<div id="self">
+	<div class="aui-info">
+        <img th:src="@{background/upload.jpg}"  id="img-txz" style="width: 100px; height: 100px;" class="aui-img-round user-img"/>
+        <input type="file" accept="image/*" width="100" height="100" id="file-txz" name="file" onchange="upload('#file-txz', '#img-txz');"  class="fileInput" value="" />
+	</div>
+		<script type="text/javascript">
+			var upload = function (c, d) {
+			"use strict";
+			var $c = document.querySelector(c),
+            $d = document.querySelector(d),
+            file = $c.files[0],
+            reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = function (e) {
+            $d.setAttribute("src", e.target.result);
+			};
+
+		};
+		</script>
+
+</div>
+</div>
+  
+  </el-container>
+
+</div>
+
+
+
+
+
+</body>
+
+<script type="text/javascript">
+	const vm = new Vue({ //记得声明，不然看不到element的input组件
+	   el: '#app',
+	   data: {
+		   input:'',
+	   },
+	   methods: {//这里用于定义方法
+	   },
+	   computed: {//计算属性
+	   }
+	 })
+</script>
+<script>
+    new Vue({
+      el: '#app1' ,
+      data: function() {
+        return { visible: false }
+      }
+    })
+  </script>
+<script>
+    new Vue({
+      el: '#app2' ,
+      data: function() {
+        return { visible: false }
+      }
+    })
+  </script>
+</html>

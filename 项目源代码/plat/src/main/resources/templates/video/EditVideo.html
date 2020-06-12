@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+           <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		   <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+       <style type="text/css" >
+    
+    </style>
+    
+    </head>
+    <body style="margin: 0;">
+    <div id="app">
+		<div th:insert="~{commons/common::topbar-login}"></div>
+			<div id = "box">
+				<el-container direction="vertical">
+					<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+						<h1 style="color:yellowgreen;font-size:35px;margin-left: 5px; margin-top: 3px;">影 视 V i d e o</h1>
+					</el-header>
+					<el-main style="background-color: white;text-align: left;opacity: 0.95;">
+						<div id="forms">
+							<div id="content">
+								<el-form :model="Video" :rules="rules" ref="Video" label-width="100px" class="demo-ruleForm">
+												<el-form-item  style="width: 800px;">
+													
+												<span style="font-size: 150%;margin-left: 0px;">编辑影视</span>
+											  <el-form-item label="剧名" prop="VideoName" style="width: 400px; margin: 10px;" >
+												<el-input v-model="Video.VideoName" ></el-input>
+												</el-form-item>
+													<el-form-item label="海报图片" style="width: 400px;margin: 10px; ">
+														<el-upload
+																class="upload-demo"
+																th:action="@{/upload}"
+																accept=".jpg,.png"
+																:on-preview="handlePreview"
+																:on-remove="handleRemove"
+																:before-remove="beforeRemove"
+																:on-success="successUpload"
+																:limit="1"
+																:file-list="fileList">
+															<el-button size="small" type="primary" >点击上传</el-button>
+															<div slot="tip" class="el-upload__tip">如不需要修改，请勿上传</div>
+														</el-upload>
+													</el-form-item>
+													<el-table-column prop="VideoID" width="150px" v-if="show">
+														<el-input v-model="Video.VideoID"></el-input>
+													</el-table-column>
+												<el-form-item label="导演" prop="Director" style="width: 400px;margin: 10px;margin-bottom: 15px;" >
+													<el-input v-model="Video.Director"></el-input>
+												</el-form-item>
+													<el-form-item label="编剧" prop="Writer" style="width: 400px;margin: 10px;margin-bottom: 15px;" >
+														<el-input v-model="Video.Writer"></el-input>
+													</el-form-item>
+													<el-form-item label="主演" prop="Actor" style="width: 400px;margin: 10px;margin-bottom: 15px;" >
+														<el-input v-model="Video.Actor"></el-input>
+													</el-form-item>
+													<el-form-item label="制片国家" prop="MadeCountry" style="width: 400px;margin: 10px;margin-bottom: 15px;" >
+													  <el-input v-model="Video.MadeCountry"></el-input>
+													</el-form-item>
+											  <el-form-item label="内容简介" prop="VideoIntroduction" style="margin: 10px;">
+												<el-input type="textarea" v-model="Video.VideoIntroduction" rows="12"></el-input>
+											  </el-form-item>
+											  <el-form-item style="margin-left: 350px;">
+												<el-button type="mini" @click="submitForm('Video')" class="myButton" style="color: white; margin-left: -100px;">立 即 修 改</el-button>
+											  </el-form-item>
+											</el-form>
+									</div>
+						
+						</div>
+					</el-main>
+				</el-container>
+				
+				
+			</div>
+       
+    			</div>
+    			
+    			<script type="text/javascript">
+    			    const vm = new Vue({
+    			        el:'#app',
+    			        data: {
+							input:'',
+							show:false,
+    			            search_word: "",
+    			            VideoID:"",
+    			            // 存入数据库Video表
+    			            Video:{
+								CoverImagePath:"[[${currentvideo.videoimgpath}]]",
+								VideoID: "[[${currentvideo.videoid}]]",
+    			                VideoName:"[[${currentvideo.videoname}]]",
+    			                Director: "[[${currentvideo.director}]]",
+    			                VideoIntroduction:"[[${currentvideo.videointro}]]",
+    			                MadeCountry: "[[${currentvideo.country}]]",
+								Writer: "[[${currentvideo.writer}]]",
+								Actor: "[[${currentvideo.actor}]]",
+    			            },
+							filepath:"[[${currentvideo.videoimgpath}]]",
+							fileList: [{name: '原图片', url: '[[${currentvideo.videoimgpath}]]'}],
+    									rules:{
+    										VideoName:[
+    											{ required: true, message: '请输入剧名', trigger: 'blur' }
+    											],
+    										Director:[
+    											{ required: true, message: '请输入导演', trigger: 'blur' }
+    										],
+    										Writer:[
+    											{ required: true, message: '请输入编剧', trigger: 'blur' }
+    										],
+    										Actor:[
+    											{ required: true, message: '请输入主演', trigger: 'blur' },
+    										],
+    											MadeCountry:[
+    												{ required: true, message: '请输入制片国家', trigger: 'blur' },
+    											],
+    									  VideoIntroduction:[
+    											{ required: true, message: '请填写内容简介', trigger: 'blur' },
+    											],
+    									}
+    			        },
+    			        methods:{
+    			            submitForm(formName) {
+    			                    this.$refs[formName].validate((valid) => {
+    			                      if (valid) {
+    			                        alert('修改成功!');
+    			                        const videoid=this.Video.VideoID;
+    			                        const videoname=this.Video.VideoName;
+    			                        const intro=this.Video.VideoIntroduction;
+    			                        const videoimgpath=this.filepath;
+    			                        const director=this.Video.Director;
+    			                        const country=this.Video.MadeCountry;
+    			                        const writer = this.Video.Writer;
+    			                        const actor = this.Video.Actor;
+    			                        window.location.href='/EditVideo?videoid='+videoid+"&videoname="+videoname+"&videoimgpath="+videoimgpath+'&intro='+intro+'&director='+director+'&country='+country+'&writer='+writer+'&actor='+actor;
+    			                      } else {
+    			                        console.log('修改失败!');
+    			                        return false;
+    			                      }
+    			                    });
+    			            },
+							handleRemove(file, fileList) {
+								console.log(file, fileList);
+							},
+							handlePreview(file) {
+								console.log(file);
+							},
+							beforeRemove(file, fileList) {
+								return this.$confirm(`确定移除 ${ file.name }？`);
+							},
+							successUpload(response,file,fileList){
+								this.filepath='/images/'+file.name;
+							}
+    			        },
+    			    });
+    			</script>
+    			</body>
+    			</html>
+    			   

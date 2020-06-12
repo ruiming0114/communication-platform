@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+		<script src="https://unpkg.com/vue/dist/vue.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<style type="text/css" >
+	.el-header, .el-footer {
+	    background-color: #B3C0D1;
+	    color: #333;
+	    text-align: center;
+	    line-height: 60px;
+	  }
+	  .el-main {
+			display: block;
+	    background-color: #E9EEF3;
+	    color: #333;
+			min-height: 700px;	
+	  }
+</style>
+
+</head>
+<body>
+<div id="app">
+		<!--实现导航栏的美工和跳转-->
+    <div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+    <div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+		<!--上方为检索内容的输入框和“检索”按钮。
+	        下方为检索结果的列表。
+	        用户点击话题名称旁边的按钮，跳转到相应话题的TopicDetail页面。
+		-->
+		<div id = "box">
+            <input type="hidden" id="word" th:value="${name}"/>
+			<el-container direction="vertical">
+				<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+					<h1 style="color: tomato; font-size:35px;margin-left: 5px; margin-top: 3px;">话 题 T o p i c</h1>
+				</el-header>
+                <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                    <span style="font-size: 150%;margin-left: 0px;">搜索结果</span>
+                    <br>
+                    <br>
+                    <div v-for="topic in topics">
+                    <el-card class="box-card" style="margin-left: 150px;width: 950px">
+                        <div slot="header" class="clearfix">
+                          <span>{{topic.title}}</span>
+                            <el-button round style="float: right;" size="medium" class="el-icon-chat-dot-round" @click="go(topic.topicid)">
+                                点击查看话题
+                            </el-button>
+                        </div>
+                        <div>
+                          {{topic.intro}}
+                        </div>
+                      </el-card>
+                    </br>
+                    </div>
+                      <style>
+                        .text {
+                          font-size: 14px;
+                        }
+                        .item {
+                          margin-bottom: 18px;
+                        
+                        }
+                      
+                        .clearfix:before,
+                        .clearfix:after {
+                          display: table;
+                          content: "";
+                        }
+                        .clearfix:after {
+                          clear: both
+                        }
+                      
+                        .box-card {
+                          width: 480px;
+                         
+                        }
+                      </style>
+                </el-main>
+
+			
+			
+		</div>
+	 
+</div>
+
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+					  input:'',
+            topics:[]
+        },
+        methods:{
+            go(id){
+                window.location.href="/topic/"+id;
+            },
+        },
+        async created() {
+            const _this = this;
+            var word = document.getElementById("word").value;
+            await axios.get('/checkTopicList/' +word).then(function (resp) {
+                    _this.topics = resp.data;
+                }
+            );
+        }
+       });
+</script>
+
+</body>
+</html>

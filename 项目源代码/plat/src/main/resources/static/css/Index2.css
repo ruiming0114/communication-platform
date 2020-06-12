@@ -1,0 +1,68 @@
+body {
+    background-image: url("../background/LoginPage.jpg");
+    background-repeat: no-repeat;
+    background-size:cover;
+    background-attachment: fixed;
+    overflow-x: hidden;
+    margin: 0px;
+}
+/*走马灯设计*/
+.el-carousel__item h3 {
+    font-size: 0px;
+    opacity: 0.75;
+    line-height: 150px;
+    margin: 0;
+  }
+
+  .el-carousel__item:nth-child(4n) {
+    background-image: url("../background/picture5.png");
+    -moz-background-size: 100% 100%;  
+    -o-background-size: 100% 100%;  
+    -webkit-background-size: 100% 100%;  
+    background-size: 100% 100%;  
+  }
+
+  .el-carousel__item:nth-child(4n+1) {
+    background-image: url("../background/picture2.jpg");
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+}
+  .el-carousel__item:nth-child(4n+2) {
+    background-image: url("../background/picture3.jpg");
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+}
+  .el-carousel__item:nth-child(4n+3) {
+    background-image: url("../background/picture4.jpg");
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+}
+  
+  /*白色总框设计*/
+  #box {
+    width: 88%;
+    height: auto;
+    margin-left: 2%;/*边框四周距离*/
+    margin-top: 2%;/*上边距*/
+    margin-bottom: 20%;
+    text-align: left;/*内容居中*/
+    background-color: white;
+    opacity: 0.9;
+    padding: 20px 50px;
+	position: relative;
+	
+}
+/*内部结构：热门书籍等设计*/
+
+#one {
+    text-align: center;
+    text-decoration:none;
+    color: black;
+}
+    

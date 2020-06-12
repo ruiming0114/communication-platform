@@ -1,0 +1,34 @@
+#content{
+    border: red 1px solid;
+		margin: 50px 100px 100px 200px;
+}
+#book{
+    border: aqua 1px solid;
+    margin: 10px;
+}
+
+.pic{
+    border: #42b983 1px solid;
+    max-width: 135px;
+    max-height: 200px;
+    vertical-align:middle;
+    display: inline-block;
+}
+
+.book{
+    border: blue 1px solid;
+    vertical-align:middle;
+    display: inline-block;
+}
+#score{
+    border: blueviolet 1px solid;
+    display: inline-block;
+    margin: 10px;
+}
+#intro{
+    margin: 10px;
+}
+
+#bookreviews{
+    margin:10px;
+}

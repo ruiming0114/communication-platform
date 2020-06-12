@@ -1,0 +1,63 @@
+body {
+    background-image: url("../background/LoginPage.jpg");
+    background-repeat: no-repeat;
+    background-size:cover;
+    background-attachment: fixed;
+    overflow-x: hidden;
+    margin: 0px;
+    
+   
+}
+ /*白色总框设计*/
+ #box {
+    width: 90%;
+    height: auto;
+    margin-left: 5%;/*边框四周距离*/
+    margin-right: 2%;
+    margin-top: 2%;/*上边距*/
+    margin-bottom: 20%;
+    text-align: left;/*内容居中*/
+    background-color: white;
+    opacity: 0.95;
+
+
+	
+}
+/*按钮设计*/
+.myButton {
+    box-shadow: 0px 10px 14px -7px #a6827e;
+    background: linear-gradient(to bottom, #7d5d3b 5%, #634b30 100%);
+    background-color: #7d5d3b;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    padding: 13px 32px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #4d3534;
+    margin-top: 30px;
+    margin-right: 0px;
+    margin-left: 15px;
+    width: 200px;
+}
+.myButton:hover {
+    background: linear-gradient(to bottom, #634b30 10%, #7d5d3b 100%);
+    background-color: #634b30;
+}
+.myButton:active {
+    position: center;
+}
+/*右侧展示栏*/
+.el-collapse {
+    margin-top: 20px;
+    margin-left: 5px;
+    font-family: Arial;
+    font-size: 15px;
+
+}
+
+

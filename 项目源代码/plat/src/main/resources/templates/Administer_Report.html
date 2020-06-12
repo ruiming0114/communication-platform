@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		
+		<title>书荫光影-书虫影迷聚集地</title>
+		<script src="https://unpkg.com/vue/dist/vue.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+		<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+	<style type="text/css">
+		#content{
+			margin: 20px 100px 100px 50px;
+		}
+	</style>
+	</head>
+	<body style="margin: 0;">
+		<div id="app">
+			<div th:insert="~{commons/common::topbar-login}"></div>
+
+					<div id = "box">
+						<el-container direction="vertical">
+							<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+								<h1 style="color: burlywood;font-size:35px;margin-left: 5px; margin-top: 3px;">管 理 员 页 面</h1>
+							</el-header>
+							<el-main style="background-color: white;text-align: left;opacity: 0.95;">
+								<div id="forms">
+									<div id="content">
+										<el-tabs v-model="activeName" @tab-click="handleClick">
+										   <el-tab-pane label="书评举报" name="first">
+												   <div id="BReport">
+													  <el-table :data="BReport"
+														   style="width: 100%"
+															   max-height="400px">
+														  <el-table-column prop="bookreviewid" width="150px" v-if="show">
+														  </el-table-column>
+														  <el-table-column prop="breportid" width="150px" v-if="show">
+														  </el-table-column>
+														  <el-table-column prop="deal" width="150px" v-if="show">
+														  </el-table-column>
+															<el-table-column fixed prop="title" label="举报标题" width="200px">
+																  </el-table-column>
+																  <el-table-column prop="content" label="举报原因" width="200px">
+																  </el-table-column>
+																  <el-table-column prop="addtime" label="举报时间" width="200px">
+																  </el-table-column>
+														  <el-table-column  width="100px">
+															  <template slot-scope="scope">
+																  <el-button v-if="isDeal1(scope.row)" size="mini" @click="noBook" >查看书评</el-button>
+																  <el-button v-else size="mini" @click="goBook(scope.row)">查看书评</el-button>
+															  </template>
+														  </el-table-column>
+														  <el-table-column  width="100px">
+															  <template slot-scope="scope">
+																  <el-button v-if="isDeal(scope.row)" size="mini" @click="passBook(scope.row)">同意举报</el-button>
+																  <el-button v-if="isDeal1(scope.row)" size="mini">已通过</el-button>
+																  <el-button v-if="isDeal2(scope.row)" size="mini">已拒绝</el-button>
+															  </template>
+														  </el-table-column>
+														  <el-table-column  width="100px">
+															  <template slot-scope="scope">
+																  <el-button v-if="isDeal(scope.row)" size="mini" @click="failedBook(scope.row)">拒绝举报</el-button>
+															  </template>
+														  </el-table-column>
+
+													  　　</el-table>
+													</div>
+											   </el-tab-pane>
+										   <el-tab-pane label="影评举报" name="second">
+												   <div id="VReport">
+													  <el-table :data="VReport"
+														   style="width: 100%"
+															   max-height="400px">
+
+														  <el-table-column prop="videoreviewid" width="150px" v-if="show">
+														  </el-table-column>
+														  <el-table-column prop="vreportid" width="150px" v-if="show">
+														  </el-table-column>
+														  <el-table-column prop="deal" width="150px" v-if="show">
+														  </el-table-column>
+														  <el-table-column fixed prop="title" label="举报标题" width="200px">
+														  </el-table-column>
+														  <el-table-column prop="content" label="举报原因" width="200px">
+														  </el-table-column>
+														  <el-table-column prop="addtime" label="举报时间" width="200px">
+														  </el-table-column>
+														  <el-table-column  width="100px">
+															  <template slot-scope="scope">
+																  <el-button v-if="isDeal1(scope.row)" size="mini" @click="noVideo" >查看影评</el-button>
+																  <el-button v-else size="mini" @click="goVideo(scope.row)">查看影评</el-button>
+															  </template>
+														  </el-table-column>
+														  <el-table-column  width="100px">
+															  <template slot-scope="scope">
+																  <el-button v-if="isDeal(scope.row)" size="mini" @click="passVideo(scope.row)">同意举报</el-button>
+																  <el-button v-if="isDeal1(scope.row)" size="mini">已通过</el-button>
+																  <el-button v-if="isDeal2(scope.row)" size="mini">已拒绝</el-button>
+															  </template>
+														  </el-table-column>
+														  <el-table-column  width="100px">
+															  <template slot-scope="scope">
+																  <el-button v-if="isDeal(scope.row)" size="mini" @click="failedVideo(scope.row)">拒绝举报</el-button>
+															  </template>
+														  </el-table-column>
+													  　　</el-table>
+													</div>
+											   </el-tab-pane>
+										   <el-tab-pane label="话题举报" name="third">
+												   <div id="TReport">
+													  <el-table :data="TReport"
+														   style="width: 100%"
+															   max-height="400px">
+
+														  <el-table-column prop="topicid" width="150px" v-if="show">
+														  </el-table-column>
+														  <el-table-column prop="topicreportid" width="150px" v-if="show">
+														  </el-table-column>
+														  <el-table-column prop="deal" width="150px" v-if="show">
+														  </el-table-column>
+															<el-table-column fixed prop="title" label="举报标题" width="200px">
+																  </el-table-column>
+																  <el-table-column prop="content" label="举报原因" width="200px">
+																  </el-table-column>
+																  <el-table-column prop="addtime" label="举报时间" width="200px">
+																  </el-table-column>
+														  <el-table-column  width="100px">
+															  <template slot-scope="scope">
+																  <el-button v-if="isDeal1(scope.row)" size="mini" @click="noTopic" >查看话题</el-button>
+																  <el-button v-else size="mini" @click="goTopic(scope.row)">查看话题</el-button>
+															  </template>
+														  </el-table-column>
+														  <el-table-column  width="100px">
+															  <template slot-scope="scope">
+																  <el-button v-if="isDeal(scope.row)" size="mini" @click="passTopic(scope.row)">同意举报</el-button>
+																  <el-button v-if="isDeal1(scope.row)" size="mini">已通过</el-button>
+																  <el-button v-if="isDeal2(scope.row)" size="mini">已拒绝</el-button>
+															  </template>
+														  </el-table-column>
+														  <el-table-column  width="100px">
+															  <template slot-scope="scope">
+																  <el-button v-if="isDeal(scope.row)" size="mini" @click="failedTopic(scope.row)">拒绝举报</el-button>
+															  </template>
+														  </el-table-column>
+													  　　</el-table>
+													</div>
+											   </el-tab-pane>
+											<el-tab-pane label="话题评论举报" name="fourth">
+												<div id="TCReport">
+													<el-table :data="TCReport"
+															  style="width: 100%"
+															  max-height="400px">
+
+														<el-table-column prop="commentid" width="150px" v-if="show">
+														</el-table-column>
+														<el-table-column prop="topiccommentreportid" width="150px" v-if="show">
+														</el-table-column>
+														<el-table-column prop="deal" width="150px" v-if="show">
+														</el-table-column>
+														<el-table-column fixed prop="title" label="举报标题" width="200px">
+														</el-table-column>
+														<el-table-column prop="content" label="举报原因" width="200px">
+														</el-table-column>
+														<el-table-column prop="addtime" label="举报时间" width="200px">
+														</el-table-column>
+														<el-table-column  width="100px">
+															<template slot-scope="scope">
+																<el-button v-if="isDeal1(scope.row)" size="mini" @click="noTopicComment" >查看评论</el-button>
+																<el-button v-else size="mini" @click="goTopicComment(scope.row)">查看评论</el-button>
+															</template>
+														</el-table-column>
+														<el-table-column  width="100px">
+															<template slot-scope="scope">
+																<el-button v-if="isDeal(scope.row)" size="mini" @click="passTopicComment(scope.row)">同意举报</el-button>
+																<el-button v-if="isDeal1(scope.row)" size="mini">已通过</el-button>
+																<el-button v-if="isDeal2(scope.row)" size="mini">已拒绝</el-button>
+															</template>
+														</el-table-column>
+														<el-table-column  width="100px">
+															<template slot-scope="scope">
+																<el-button v-if="isDeal(scope.row)" size="mini" @click="failedTopicComment(scope.row)">拒绝举报</el-button>
+															</template>
+														</el-table-column>
+														　　</el-table>
+												</div>
+											</el-tab-pane>
+										 </el-tabs>
+							 	  </div>
+							  	 </div>
+							</el-main>
+						</el-container>
+						
+						
+					</div>
+		</div>
+			
+	</body>
+
+	
+	<script type="text/javascript">
+		 const vm = new Vue({ //记得声明，不然看不到element的input组件
+		    el: '#app',
+		    data: {
+				input:'',
+		    	show: false,
+					activeName:'first',
+					BReport: [{
+					　　　　　　title: '违规内容1',
+					　　　　　　content: '内容不合法',
+					　　　　　　addtime: '2020-03-20 20:20'
+					　　　　}],
+					VReport: [{
+					　　　　　　Title: '违规内容2',
+					　　　　　　Content: '内容不合法',
+					　　　　　　Datetime: '2020-03-20 20:20'
+					　　　　}],
+					TReport: [{
+					　　　　　　Title: '违规内容3',
+					　　　　　　Content: '内容不合法',
+					　　　　　　Datetime: '2020-03-20 20:20'
+					　　　　}],
+				TCReport: [{
+					Title: '违规内容3',
+					Content: '内容不合法',
+					Datetime: '2020-03-20 20:20'
+				}],
+					
+		    },
+		    methods: {
+				//这里用于定义方法
+				passBook(row){
+					res=confirm("确认通过举报吗？通过举报后会删除书评和相应信息");
+					if (res==true){
+						window.location.href='/passBookReviewReport/'+row.breportid;
+					}
+				},
+				failedBook(row){
+					res=confirm("确认拒绝举报吗？");
+					if (res==true){
+						window.location.href='/failBookReviewReport/'+row.breportid;
+					}
+				},
+				noBook(){
+					alert("书评存在违规，已被删除，无法查看")
+				},
+				goBook(row){
+					window.location.href='/bookreview/'+row.bookreviewid;
+				},
+				passVideo(row){
+					res=confirm("确认通过举报吗？通过举报后会删除影评和相应信息");
+					if (res==true){
+						window.location.href='/passVideoReviewReport/'+row.vreportid;
+					}
+				},
+				failedVideo(row){
+					res=confirm("确认拒绝举报吗？");
+					if (res==true){
+						window.location.href='/failVideoReviewReport/'+row.vreportid;
+					}
+				},
+				noVideo(){
+					alert("影评存在违规，已被删除，无法查看")
+				},
+				goVideo(row){
+					window.location.href='/videoreview/'+row.videoreviewid;
+				},
+				noTopic(){
+					alert("话题存在违规，已被删除，无法查看");
+				},
+				goTopic(row){
+					window.location.href='/topic/'+row.topicid;
+				},
+				passTopic(row){
+					res=confirm("确认通过举报吗？通过举报后会删除话题和相应信息");
+					if (res==true){
+						window.location.href='/passTopicReport/'+row.topicreportid;
+					}
+				},
+				failedTopic(row){
+					res=confirm("确认拒绝举报吗？");
+					if (res==true){
+						window.location.href='/failTopicReport/'+row.topicreportid;
+					}
+				},
+				noTopicComment(){
+					alert("话题评论存在违规，已被删除，无法查看");
+				},
+				goTopicComment(row){
+					window.location.href='/topiccomment/'+row.commentid;
+				},
+				passTopicComment(row){
+					res=confirm("确认通过举报吗？通过举报后会删除该评论和相应信息");
+					if (res==true){
+						window.location.href='/passTopicCommentReport/'+row.topiccommentreportid;
+					}
+				},
+				failedTopicComment(row){
+					res=confirm("确认拒绝举报吗？");
+					if (res==true){
+						window.location.href='/failTopicCommentReport/'+row.topiccommentreportid;
+					}
+				},
+				isDeal(row){
+					if (row.deal==0){
+						return true;
+					}
+					else {
+						return false;
+					}
+				},
+				isDeal1(row){
+					if (row.deal==1){
+						return true;
+					}
+					else {
+						return false;
+					}
+				},
+				isDeal2(row){
+					if (row.deal==2){
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+		    },
+			 created(){
+				 const _this = this;
+				 axios.get('/queryBookReviewReportList').then(function (resp) {
+							 console.log(resp.data);
+							 _this.BReport = resp.data;
+						 }
+				 );
+				 axios.get('/queryVideoReviewReportList').then(function (resp) {
+							 console.log(resp.data);
+							 _this.VReport = resp.data;
+						 }
+				 );
+				 axios.get('/queryTopicReportList').then(function (resp) {
+							 console.log(resp.data);
+							 _this.TReport = resp.data;
+						 }
+				 );
+				 axios.get('/queryTopicCommentReportList').then(function (resp) {
+							 console.log(resp.data);
+							 _this.TCReport = resp.data;
+						 }
+				 );
+			 },
+		    computed: {//计算属性
+		    }
+		  })
+	</script>
+</html>

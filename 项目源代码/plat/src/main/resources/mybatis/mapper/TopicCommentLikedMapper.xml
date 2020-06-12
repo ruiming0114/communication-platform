@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.TopicCommentLikedMapper">
+    <select id="isLiked" resultType="TopicCommentLiked" parameterType="int">
+        select * from topiccommentliked where commentid=#{commentid} and userid=#{userid}
+    </select>
+
+    <select id="queryTopicCommentLikedListByCommentID" parameterType="int" resultType="TopicCommentLiked">
+        select * from topiccommentliked where commentid=#{commentid}
+    </select>
+
+
+    <select id="queryTopicCommentLikedByComment" resultType="User" parameterType="int">
+        select mybatis.user.* from topiccommentliked,mybatis.user where topiccommentliked.userid=mybatis.user.userid and topiccommentliked.commentid=#{commentid}
+    </select>
+
+    <select id="queryTopicCommentLikedByUser" resultType="TopicComment" parameterType="int">
+        select topiccomment.* from topiccomment,topiccommentliked where topiccoment.commentid=topiccommentliked.commentid and topiccommentliked.userid=#{userid}
+    </select>
+
+    <insert id="addTopicCommentLiked" parameterType="TopicCommentLiked">
+        insert into topiccommentliked(commentid,userid) values (#{commentid},#{userid})
+    </insert>
+
+    <delete id="deleteTopicCommentLiked" parameterType="int">
+        delete from topiccommentliked where commentid=#{commentid} and userid=#{userid}
+    </delete>
+
+    <select id="cntByComment" parameterType="int" resultType="int">
+        select count(*) from topiccommentliked where commentid=#{commentid}
+    </select>
+
+</mapper>

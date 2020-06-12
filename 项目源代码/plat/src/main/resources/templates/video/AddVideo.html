@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+	<meta name="referrer" content="no-referrer"/>
+    <title>书荫光影-书虫影迷聚集地</title>
+   <script src="https://unpkg.com/vue/dist/vue.js"></script>
+          <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+      <style type="text/css" >
+
+   </style>
+   
+   </head>
+   <body style="margin: 0;">
+   <div id="app">
+	   <div th:insert="~{commons/common::topbar-login}"></div>
+		   <div id = "box">
+			<el-container direction="vertical">
+				<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+					<h1 style="color:yellowgreen;font-size:35px;margin-left: 5px; margin-top: 3px;">影 视 V i d e o</h1>
+				</el-header>
+                <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                    <div id="forms">
+
+							<el-form :model="Video" :rules="rules" ref="Video" label-width="100px" class="demo-ruleForm">
+								<el-form-item  style="width: 800px;">
+									
+								<span style="font-size: 150%;margin-left: 0px;">添加影视</span>
+							  <el-form-item label="剧名" prop="VideoName" style="width: 400px;margin: 10px;" >
+								<el-input v-model="Video.VideoName"></el-input>
+								</el-form-item>
+									<el-form-item label="海报图片" style="width: 400px;margin: 10px; ">
+										<el-upload
+												class="upload-demo"
+												th:action="@{/upload}"
+												accept=".jpg,.png"
+												:on-preview="handlePreview"
+												:on-remove="handleRemove"
+												:before-remove="beforeRemove"
+												:on-success="successUpload"
+												:limit="1"
+												:file-list="fileList">
+											<el-button size="small" type="primary" >点击上传</el-button>
+											<div slot="tip" class="el-upload__tip">请上传jpg/png文件，只能上传一张</div>
+										</el-upload>
+									</el-form-item>
+								<el-form-item label="导演" prop="Director" style="width: 400px;margin: 10px;margin-bottom: 15px;" >
+									<el-input v-model="Video.Director" ></el-input>
+								</el-form-item>
+									<el-form-item label="编剧" prop="Writer" style="width: 400px;margin: 10px;margin-bottom: 15px;" >
+										<el-input v-model="Video.Writer"></el-input>
+									</el-form-item>
+									<el-form-item label="主演" prop="Actor" style="width: 400px;margin: 10px;margin-bottom: 15px;" >
+										<el-input v-model="Video.Actor"></el-input>
+									</el-form-item>
+								 <el-form-item label="制片国家" prop="MadeCountry" style="width: 400px;margin: 10px;margin-bottom: 15px;" >
+								   <el-input v-model="Video.MadeCountry"></el-input>
+								 </el-form-item>
+							  <el-form-item label="内容简介" prop="VideoIntroduction" style="margin: 10px;">
+								<el-input type="textarea" v-model="Video.VideoIntroduction" rows="12" ></el-input>
+							  </el-form-item>
+							  <el-form-item style="margin-left: 350px;">
+								<el-button type="mini" @click="submitForm('Video')" class="myButton" style="color: white;">添 加 影 视</el-button>
+							  </el-form-item>
+							</el-form>
+					</div>
+                    
+                    </div>
+                </el-main>
+			</el-container>
+			
+			
+		</div>
+       
+   </div>
+   
+   <script type="text/javascript">
+       const vm = new Vue({
+           el:'#app',
+           data: {
+           		input:"",
+               search_word: "",
+               VideoID:"",
+               // 存入数据库Video表
+               Video:{
+				   CoverImagePath:"",
+                   VideoName:"" ,
+                   Director: "",
+                   VideoIntroduction:"",
+                   MadeCountry: "",
+									 Actor:"",
+				   Writer:"",
+               },
+			   filepath:"",
+   						fileList: [],
+   						rules:{
+   							VideoName:[
+   								{ required: true, message: '请输入剧名', trigger: 'blur' }
+   								],
+   							Director:[
+   								{ required: true, message: '请输入导演', trigger: 'blur' }
+   							],
+   							Writer:[
+   								{ required: true, message: '请输入编剧', trigger: 'blur' }
+   							],
+   							Actor:[
+   								{ required: true, message: '请输入主演', trigger: 'blur' },
+   							],
+								MadeCountry:[
+									{ required: true, message: '请输入制片国家', trigger: 'blur' },
+								],
+   						  VideoIntroduction:[
+   								{ required: true, message: '请填写内容简介', trigger: 'blur' },
+   								],
+   						}
+           },
+           methods:{
+               submitForm(formName) {
+                       this.$refs[formName].validate((valid) => {
+                         if (valid) {
+                           alert('添加成功!');
+                           const videoname=this.Video.VideoName;
+                           const director=this.Video.Director;
+							 const videoimgpath=this.filepath;
+                           const intro = this.Video.VideoIntroduction;
+                           const country=this.Video.MadeCountry;
+                           const actor = this.Video.Actor;
+                           const writer = this.Video.Writer;
+                           window.location.href="/AddVideo?videoname="+videoname+"&director="+director+"&videoimgpath="+videoimgpath+"&intro="+intro+"&country="+country+"&actor="+actor+"&writer="+writer;
+                         } else {
+                           console.log('添加失败!');
+                           return false;
+                         }
+                       });
+               },
+			   handleRemove(file, fileList) {
+				   console.log(file, fileList);
+			   },
+			   handlePreview(file) {
+				   console.log(file);
+			   },
+			   beforeRemove(file, fileList) {
+				   return this.$confirm(`确定移除 ${ file.name }？`);
+			   },
+			   successUpload(response,file,fileList){
+				   this.filepath='/images/'+file.name;
+			   }
+           },
+       });
+   </script>
+   </body>
+   </html>
+      

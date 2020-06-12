@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.BookScoreMapper">
+    <select id="queryBookScoreByBook" parameterType="int" resultType="BookScore">
+        select * from bookscore where bookid=#{bookid}
+    </select>
+
+    <select id="getScoreByUserAndBook" parameterType="int" resultType="BookScore">
+        select * from bookscore where bookid=#{bookid} and userid=#{userid}
+    </select>
+
+    <insert id="addBookScore" parameterType="BookScore">
+        insert into bookscore (bookid,userid,score) values (#{bookid},#{userid},#{score})
+    </insert>
+
+    <update id="updateBookScore" parameterType="BookScore">
+        update bookscore set score=#{score} where bookid=#{bookid} and userid=#{userid}
+    </update>
+
+    <delete id="deleteBookScore" parameterType="int">
+        delete from bookscore where bookid=#{bookid} and userid=#{userid}
+    </delete>
+
+    <select id="cntByBook" parameterType="int" resultType="int">
+        select count(*) from bookscore where bookid=#{bookid}
+    </select>
+</mapper>

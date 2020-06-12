@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.VideoMapper">
+    <select id="queryVideoByName" resultType="Video" parameterType="String">
+        select * from mybatis.video where videoname like "%"#{name}"%"
+    </select>
+
+    <select id="queryHotVideoList" resultType="Video">
+       select V.videoid,V.videoname,V.videointro,V.totalscore,V.director,V.videoimgpath,V.country from(
+                select video.*,count(*) as cnt from videoreview,video where video.videoid=videoreview.videoid group by video.videoid order by cnt desc limit 8) as V
+    </select>
+
+    <select id="queryNewVideoList" resultType="Video">
+        select * from video order by videoid desc limit 8
+    </select>
+
+    <select id="queryRecommendVideoList" resultType="Video">
+        select * from video order by totalscore desc limit 8
+    </select>
+
+    <select id="queryVideoList" resultType="Video">
+        select * from video
+    </select>
+
+    <select id="queryVideoByID" resultType="Video" parameterType="int">
+        select * from video where videoid = #{videoid}
+    </select>
+
+    <insert id="addVideo" parameterType="Video">
+        insert into video(videoid,videoname,videointro,totalscore,director,videoimgpath,country,writer,actor) values(#{videoid},#{videoname},#{videointro},#{totalscore},#{director},#{videoimgpath},#{country},#{writer},#{actor})
+    </insert>
+
+    <update id="updateVideo" parameterType="Video">
+        update video set videoname=#{videoname},videointro=#{videointro},totalscore=#{totalscore},director=#{director},videoimgpath=#{videoimgpath},country=#{country},writer=#{writer},actor=#{actor} where videoid=#{videoid}
+    </update>
+
+    <delete id="deleteVideo" parameterType="int">
+        delete from video where videoid=#{videoid}
+    </delete>
+
+    <select id="cnt" resultType="int">
+        select count(*) from video
+    </select>
+
+    <select id="max" resultType="int">
+        select ifnull(max(videoid),0) from video
+    </select>
+</mapper>

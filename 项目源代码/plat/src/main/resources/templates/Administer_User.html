@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+			<style type="text/css" >
+				.el-header, .el-footer {
+				  background-color: #B3C0D1;
+				  color: #333;
+				  text-align: center;
+				  line-height: 60px;
+				  }
+				  .el-main {
+					display: block;
+				  background-color: #E9EEF3;
+				  color: #333;
+					min-height: 700px;	
+				  }
+				
+				</style>
+</head>
+<body style="margin: 0;">
+<div id="app">
+
+	<div th:insert="~{commons/common::topbar-login}"></div>
+
+	   <div id = "box">
+		<el-container direction="vertical">
+			<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+				<h1 style="color: burlywood; font-size:35px;margin-left: 5px; margin-top: 3px;">管 理 员 页 面</h1>
+			</el-header>
+			<el-main style="background-color: white;text-align: left;opacity: 0.95;">
+				<div id="forms">
+					<div id="content">
+						<span style="margin-left: 0px;margin-top:10px;font-size:150%;">用户列表</span>
+						<div class="block" style="width: 1100px; margin-left: 150px;margin-top: 10px;">
+						  
+						  <el-table :data="Users"
+							   style="min-height: 600px;">
+							  <el-table-column prop="userid" v-if="show">
+							  </el-table-column>
+								<el-table-column prop="username" label="用户名" width="200px">
+									  </el-table-column>
+									  <el-table-column prop="email" label="邮箱" width="300px">
+									  </el-table-column>
+									  <el-table-column label="权限" width="200px">
+										  普通用户
+									  </el-table-column>
+										<el-table-column  width="200px">
+											<template slot-scope="scope">
+											 <el-button size="mini" icon="el-icon-remove-outline" @click="nono(scope.row.userid)"> 封禁</el-button>
+											</template>
+										</el-table-column>
+						  　　</el-table>
+							<el-pagination
+									style="margin-left: 200px;"
+									@size-change="size"
+									@current-change="page"
+									:current-page="currentPage"
+									:page-size="pageSize"
+									:page-sizes="[4,10,20]"
+									layout="total, sizes, prev, pager, next, jumper"
+									:total="total">
+							</el-pagination>
+						  </div>
+				</div>
+				<footer>
+						
+					</footer>
+				
+				</div>
+    
+</div>
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+					// 当前页面只显示一本书的书评 仅由CheckBook页面跳转而来
+			async: false,
+			input: '',
+			total: [[${total_size}]],
+			currentPage:1,
+			pageSize:10,
+			Users:[]
+        },
+        methods:{
+        	nono(id){
+				var res = confirm("确认封禁该用户吗？封禁后该用户将不能登录平台，但其发表的内容将保留，封禁操作不可恢复");
+				if (res==true){
+					alert("封禁成功");
+					window.location.href="/delete_user_admin?userid="+id;
+				}
+			},
+			async page(currentPage) {
+				this.currentPage = currentPage;
+				const _this=this;
+				await axios.get('/queryUserListInPage/' + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+							_this.Users = resp.data;
+						}
+				);
+			},
+			async size(pageSize) {
+
+				this.pageSize = pageSize;
+				const _this=this;
+				await axios.get('/queryUserListInPage/' + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+							_this.Users = resp.data;
+						}
+				);
+			},
+           
+        },
+		async created(){
+
+			const _this=this;
+			await axios.get('/queryUserListInPage/' + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+						_this.Users = resp.data;
+					}
+			);
+		}
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.BookReviewMapper">
+    <select id="queryBookReviewById" resultType="BookReview" parameterType="int">
+        select * from mybatis.bookreview where bookreviewid = #{bookreviewid}
+    </select>
+
+    <select id="queryBookReviewListByBookId" resultType="BookReview" parameterType="int">
+        select * from bookreview where bookid = #{bookid}
+    </select>
+
+    <select id="queryBookReviewListByUserId" resultType="BookReview" parameterType="int">
+        select * from bookreview where userid = #{userid}
+    </select>
+
+    <insert id="addBookReview" parameterType="BookReview">
+        insert into bookreview(bookreviewid,userid,bookid,title,likenum,againstnum,content,addtime) values(#{bookreviewid},#{userid},#{bookid},#{title},#{likenum},#{againstnum},#{content},#{addtime})
+    </insert>
+
+    <update id="updateBookReview" parameterType="BookReview">
+        update bookreview set userid=#{userid},bookid=#{bookid},title=#{title},likenum=#{likenum},againstnum=#{againstnum},content=#{content},addtime=#{addtime} where bookreviewid=#{bookreviewid}
+    </update>
+
+    <delete id="deleteBookReview" parameterType="int">
+        delete from bookreview where bookreviewid=#{bookreviewid}
+    </delete>
+
+    <select id="cnt" resultType="int">
+        select count(*) from bookreview
+    </select>
+
+    <select id="max" resultType="int">
+        select ifnull(max(bookreviewid),0) from bookreview
+    </select>
+</mapper>

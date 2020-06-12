@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+            <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+            <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+      <style type="text/css" >
+    	.text {
+    	    font-size: 14px;
+    	  }
+  
+    	  .text-item {
+    	    padding:  0;
+    	  }
+    	
+    	  .box-card {
+    	    width: 800px;
+    	  }
+    		.button {
+    		    padding: 0;
+    		  }
+    </style>
+    
+    </head>
+    <body style="margin: 0;">
+    <div id="app">
+        <div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+        <div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+            
+            <div id = "box">
+              <el-container direction="vertical">
+                <el-header style="background-color: white;text-align: left;opacity: 0.95;">
+                  <h1 style="color: violet;font-size:35px;margin-left: 5px; margin-top: 3px;">小 组 G r o u p</h1>
+                </el-header>
+                        <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                            <div id="forms">
+                              <div id="content">
+                                <el-card class="box-card" style="float: left; margin-left: 200px;min-height:650px">
+                                  <div id="action" style="float: right;margin-top: 10px;">
+                                    <input type="hidden" id="groupid" th:value="${currentgroup.groupid}">
+
+                                      <span th:if="${currentuserid}!=-1 and ${currentuserauthority}==0">
+                                    <el-button class="el-icon-magic-stick" @click="toApply"> 申请小组管理员</el-button>
+                                      </span>
+
+                                      <span th:if="${currentuserid}!=-1 and ${currentuserauthority}>0">
+                                    <el-button class="el-icon-coordinate" @click="toManage"> 管理小组</el-button>
+                                      </span>
+                                  </div>
+                                  <h3>[[${currentgroup.groupname}]]</h3>
+                                    <br>
+                                   <el-divider ><i class="el-icon-user-solid"></i> 小组组长</el-divider>
+                                      <div><span>[[${groupleader.username}]]</span></div>
+                                    <br>
+                                    <el-divider ><i class="el-icon-user-solid"></i> 小组管理员</el-divider>
+                                    <div th:each="user:${groupadmin}">
+                                      <span th:text="${user.username}"></span></div>
+                                    <br>
+                                    <el-divider ><i class="el-icon-user-solid"></i> 小组成员</el-divider>
+                                    <div th:each="user:${groupmember}">
+                                        <span th:text="${user.username}"></span></div>
+                                    <br>
+                                 </el-card>
+                               </div>
+                               
+                               
+                           </div>
+                           <footer>
+                             
+                           </footer>
+
+                        </el-main>
+              </el-container>
+              
+              
+            </div>
+        
+    </div>
+    
+    <script type="text/javascript">
+        const vm = new Vue({
+            el:'#app',
+            data: {
+                input:'',
+                search_word: "",
+    						<!-- 从Group,GroupPost表中提取数据 -->
+                Group:{
+								},
+            },
+            methods:{
+               toApply(){
+                   var groupid=document.getElementById("groupid").value;
+                   window.location.href="/toApplyGroupAdmin/"+groupid;
+               },
+                toManage(){
+                    var groupid=document.getElementById("groupid").value;
+                    window.location.href="/toAdminGroupMember/"+groupid;
+                }
+            }
+    
+        });
+    </script>
+    </body>
+    </html>

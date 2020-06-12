@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+		<script src="https://unpkg.com/vue/dist/vue.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+        <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  
+<style type="text/css" >
+	.el-header, .el-footer {
+	    background-color: #B3C0D1;
+	    color: #333;
+	    text-align: center;
+	    line-height: 60px;
+	  }
+	  .el-main {
+			display: block;
+	    background-color: #E9EEF3;
+	    color: #333;
+			min-height: 700px;	
+      }
+
+</style>
+
+</head>
+<body>
+<div id="app" >
+		<!--实现导航栏的美工和跳转-->
+    <div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+		<!--中间部分包括一个话题名称输入框、话题描述输入框、话题标签选择框、“好了，发起话题”按钮。
+		-->
+		<div id = "box">
+			<el-container direction="vertical">
+				<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+					<h1 style="color: tomato; font-size:35px;margin-left: 5px; margin-top: 3px;">话 题 T o p i c</h1>
+				</el-header>
+                <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                    <div id="forms">
+                      <el-form :model="Topic" :rules="rules" ref="Topic" label-width="100px" class="demo-ruleForm">
+                        <el-form-item  style="width: 800px;">
+                          
+                        <span style="font-size: 150%;margin-left: 0px;">添加话题</span>
+                      </br>
+                        <el-form-item label="话题名称" prop="TopicName" style="width: 400px;margin: 10px;" >
+                          <el-input v-model="Topic.TopicName" ></el-input>
+                        </el-form-item>
+                            <el-form-item label="话题分类" prop="TopicClassify" style="width: 400px;margin: 10px;" >
+                                <template>
+                                    <el-select v-model="Topic.TopicClassify" placeholder="请选择" style="width: 300px">
+                                        <el-option
+                                                v-for="item in options"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </template>
+                            </el-form-item>
+                        <el-form-item label="话题简介" prop="TopicIntroduction" style="margin: 10px;">
+                          <el-input type="textarea" v-model="Topic.TopicIntroduction" rows="12"></el-input>
+                        </el-form-item>
+                        <el-form-item style="margin-left: 300px;">
+                          <el-button type="mini" @click="submitForm('Topic')" class="myButton" style="color: white;">立 即 发 布</el-button>
+                        </el-form-item>
+                      </el-form>
+                    
+                    </div>
+                </el-main>
+			</el-container>
+			
+			
+		</div>
+	 
+</div>
+
+<script type="text/javascript">
+  const vm = new Vue({
+      el:'#app',
+      data: {
+          input:'',
+          search_word: "",
+          BookID:"",
+          // 存入数据库Book表
+          Topic:{
+              TopicName:"" ,
+              TopicClassify: "书籍",
+              TopicIntroduction:""
+          },
+          fileList: [{name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
+          rules:{
+            TopicName:[
+              { required: true, message: '请输入话题名称', trigger: 'blur' }
+              ],
+            TopicIntroduction:[
+              { required: true, message: '请填写话题简介', trigger: 'blur' },
+              ],
+          },
+          options: [{
+              value: '书籍',
+              label: '书籍'
+          }, {
+              value: '影视',
+              label: '影视'
+          }, {
+              value: '生活',
+              label: '生活'
+          }, {
+              value: '体育',
+              label: '体育'
+          }, {
+              value: '其他',
+              label: '其他'
+          }],
+      },
+      methods:{
+          submitForm(formName) {
+                  this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                      alert('添加成功!');
+                      const title=this.Topic.TopicName;
+                      const intro=this.Topic.TopicIntroduction;
+                      const classi=this.Topic.TopicClassify;
+                      window.location.href="/AddTopic?title="+title+"&intro="+intro+"&classify="+classi;
+                    } else {
+                      console.log('添加失败!');
+                      return false;
+                    }
+                  });
+          },
+          handleRemove(file, fileList) {
+                  console.log(file, fileList);
+                },
+                handlePreview(file) {
+                  console.log(file);
+                },
+                beforeRemove(file, fileList) {
+                  return this.$confirm(`确定移除 ${ file.name }？`);
+          }
+      },
+  });
+</script>
+
+</body>
+</html>

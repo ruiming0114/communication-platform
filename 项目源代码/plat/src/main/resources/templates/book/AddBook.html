@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+	<meta name="referrer" content="no-referrer"/>
+    <title>书荫光影-书虫影迷聚集地</title>
+   <script src="https://unpkg.com/vue/dist/vue.js"></script>
+          <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+		  <link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+		  <style type="text/css" >
+			.el-header, .el-footer {
+				background-color: #B3C0D1;
+				color: #333;
+				text-align: center;
+				line-height: 60px;
+			  }
+			  .el-main {
+					display: block;
+				background-color: #E9EEF3;
+				color: #333;
+					min-height: 700px;	
+			  }
+		
+		</style>
+		
+   </head>
+   <body style="margin: 0;">
+   <div id="app">
+	   <div th:insert="~{commons/common::topbar-login}"></div>
+		   <div id = "box">
+			<el-container direction="vertical">
+				<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+					<h1 style="color: teal; font-size:35px;margin-left: 5px; margin-top: 3px;">图 书 B o o k</h1>
+				</el-header>
+                <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                    <div id="forms">
+						<el-form :model="Book" :rules="rules" ref="Book" label-width="100px" class="demo-ruleForm">
+							<el-form-item  style="width: 800px; margin-top: 0px;">
+							<span style="font-size: 150%;margin-left: 0px;">添加书籍</span>
+						  <el-form-item label="书名" prop="BookName" style="width: 400px;margin: 10px;" >
+							<el-input v-model="Book.BookName"></el-input>
+							</el-form-item>
+								<el-form-item label="封面图片" style="width: 400px;margin: 10px; ">
+									<el-upload
+											class="upload-demo"
+											th:action="@{/upload}"
+											accept=".jpg,.png"
+											:on-preview="handlePreview"
+											:on-remove="handleRemove"
+											:before-remove="beforeRemove"
+											:on-success="successUpload"
+											:limit="1"
+											:file-list="fileList">
+										<el-button size="small" type="primary" >点击上传</el-button>
+										<div slot="tip" class="el-upload__tip">请上传jpg/png文件，只能上传一张</div>
+									</el-upload>
+								</el-form-item>
+							<el-form-item label="作者" prop="Author" style="width: 400px;margin: 10px;margin-bottom: 15px;" >
+								<el-input v-model="Book.Author"></el-input>
+							</el-form-item>
+							<el-form-item label="出版社" prop="Publisher" style="width: 400px;margin: 10px;margin-bottom: 15px;" >
+								<el-input v-model="Book.Publisher"></el-input>
+							</el-form-item>
+							<el-form-item label="ISBN" prop="ISBN" style="width: 400px;margin: 10px;margin-bottom: 15px;" >
+							  <el-input v-model="Book.ISBN"></el-input>
+							</el-form-item>
+						  <el-form-item label="书籍简介" prop="BookIntroduction" style="margin: 10px;">
+							<el-input type="textarea" v-model="Book.BookIntroduction" rows="12"></el-input>
+						  </el-form-item>
+						  <el-form-item style="margin-left: 350px;">
+							<el-button type="mini" @click="submitForm('Book')" class="myButton" style="color: white;">添 加 新 书</el-button>
+						  </el-form-item>
+						</el-form>
+                    </div>
+                </el-main>
+			</el-container>
+		   </div>
+   <script type="text/javascript">
+       const vm = new Vue({
+           el:'#app',
+           data: {
+			   input:'',
+               search_word: "",
+               BookID:"",
+               // 存入数据库Book表
+               Book:{
+                   BookName:"" ,
+                   Author: "",
+                   ISBN:"",
+                   CoverImagePath:"",
+                   Publisher: "",
+                   BookIntroduction:""
+               },
+			   filepath:"",
+   						rules:{
+   							BookName:[
+   								{ required: true, message: '请输入书名', trigger: 'blur' }
+   								],
+   							Author:[
+   								{ required: true, message: '请输入作者', trigger: 'blur' }
+   							],
+   							Publisher:[
+   								{ required: true, message: '请输入出版社', trigger: 'blur' }
+   							],
+   							ISBN:[
+   								{ required: true, message: '请输入ISBN号', trigger: 'blur' },
+   								{ min: 13,max:13,message: '内容为13位数字', trigger: 'blur' }
+   							],
+   						  BookIntroduction:[
+   								{ required: true, message: '请填写书籍简介', trigger: 'blur' },
+   								],
+   						}
+           },
+           methods:{
+               submitForm(formName) {
+                       this.$refs[formName].validate((valid) => {
+                         if (valid) {
+                           alert('添加成功!');
+							 const bookname=this.Book.BookName;
+							 const author=this.Book.Author;
+							 const publisher=this.Book.Publisher;
+							 const isbn=this.Book.ISBN;
+							 const intro=this.Book.BookIntroduction;
+							 const bookimgpath=this.filepath;
+							 window.location.href='/AddBook?bookname='+bookname+'&author='+author+'&publisher='+publisher+'&isbn='+isbn+'&intro='+intro+'&bookimgpath='+bookimgpath;
+                         } else {
+                           console.log('添加失败!');
+                           return false;
+                         }
+                       });
+               },
+			   handleRemove(file, fileList) {
+				   console.log(file, fileList);
+			   },
+			   handlePreview(file) {
+				   console.log(file);
+			   },
+			   beforeRemove(file, fileList) {
+				   return this.$confirm(`确定移除 ${ file.name }？`);
+			   },
+			   successUpload(response,file,fileList){
+               		this.filepath='/images/'+file.name;
+			   }
+           },
+       });
+   </script>
+   </body>
+   </html>
+      

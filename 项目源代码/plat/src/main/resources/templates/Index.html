@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+	<meta name="referrer" content="no-referrer"/>
+    <title>书荫光影-书虫影迷聚集地</title>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"/>
+	<link rel="stylesheet" th:href="@{/css/Index2.css}"/>
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<style type="text/css" >
+	.el-header, .el-footer {
+	    background-color: #B3C0D1;
+	    color: #333;
+	    text-align: center;
+	    line-height: 60px;
+	  }
+	  .el-main {
+			display: block;
+	    background-color: #E9EEF3;
+	    color: #333;
+			min-height: 700px;	
+	  }
+</style>
+
+</head>
+<body>
+<div id="app">
+		<!--实现导航栏的美工和跳转-->
+	<div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+	<div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+		<!--主页展示热点内容。热点内容包括流行书籍、流行影视、热门评论、热门话题。-->
+		<div id = "box">
+			<div>
+				<h2 class="titles">热点速递</h2>
+				<template style="float: left;">
+					<div class="block">
+					  <el-carousel height="500px" style="width: 700px; " @click.native="gogogo" ref="carousel">
+						<el-carousel-item v-for="item in 4" :key="item" >
+								<h3 class="small">{{ item }}</h3>
+						</el-carousel-item>
+					  </el-carousel>
+					</div>
+				</template>
+				<!--走马灯旁边的榜单列表，可插入数据库的数据-->
+				<div style="margin-left: 760px;margin-top: -510px;">
+					<h4 style="color: teal;">五月图书榜 TOP5</h4>
+					<tr >
+						<span th:if="${recommendbook1}!=null">
+						<h5>Top1:&nbsp;<a th:href="@{'/book/'+${recommendbook1.bookid}}" style="color: black;text-decoration: none"><span th:text="${recommendbook1.bookname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendbook1}==null">
+						<h5>Top1:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendbook2}!=null">
+						<h5>Top2:&nbsp;<a th:href="@{'/book/'+${recommendbook2.bookid}}" style="color: black;text-decoration: none"><span th:text="${recommendbook2.bookname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendbook2}==null">
+						<h5>Top2:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendbook3}!=null">
+						<h5>Top3:&nbsp;<a th:href="@{'/book/'+${recommendbook3.bookid}}" style="color: black;text-decoration: none"><span th:text="${recommendbook3.bookname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendbook3}==null">
+						<h5>Top3:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendbook4}!=null">
+						<h5>Top4:&nbsp;<a th:href="@{'/book/'+${recommendbook4.bookid}}" style="color: black;text-decoration: none"><span th:text="${recommendbook4.bookname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendbook4}==null">
+						<h5>Top4:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendbook5}!=null">
+							<h5>Top5:&nbsp;<a th:href="@{'/book/'+${recommendbook5.bookid}}" style="color: black;text-decoration: none"><span th:text="${recommendbook5.bookname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendbook5}==null">
+						<h5>Top5:&nbsp;暂无数据</h5>
+						</span>
+					</tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<h4 style="color:yellowgreen;">五月影视榜 TOP5</h4>
+					<tr >
+						<span th:if="${recommendvideo1}!=null">
+						<h5>Top1:&nbsp;<a th:href="@{'/video/'+${recommendvideo1.videoid}}" style="color: black;text-decoration: none"><span th:text="${recommendvideo1.videoname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendvideo1}==null">
+						<h5>Top1:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendvideo2}!=null">
+						<h5>Top2:&nbsp;<a th:href="@{'/video/'+${recommendvideo2.videoid}}" style="color: black;text-decoration: none"><span th:text="${recommendvideo2.videoname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendvideo2}==null">
+						<h5>Top2:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendvideo3}!=null">
+						<h5>Top3:&nbsp;<a th:href="@{'/video/'+${recommendvideo3.videoid}}" style="color: black;text-decoration: none"><span th:text="${recommendvideo3.videoname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendvideo3}==null">
+						<h5>Top3:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendvideo4}!=null">
+						<h5>Top4:&nbsp;<a th:href="@{'/video/'+${recommendvideo4.videoid}}" style="color: black;text-decoration: none"><span th:text="${recommendvideo4.videoname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendvideo4}==null">
+						<h5>Top4:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendvideo5}!=null">
+							<h5>Top5:&nbsp;<a th:href="@{'/video/'+${recommendvideo5.videoid}}" style="color: black;text-decoration: none"><span th:text="${recommendvideo5.videoname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendvideo5}==null">
+						<h5>Top5:&nbsp;暂无数据</h5>
+						</span>
+					</tr>
+				</div>
+				<div style="margin-left: 980px;margin-top: -483px;">
+					<h4 style="color: tomato;">五月话题榜 TOP5</h4>
+					<tr >
+						<span th:if="${recommendtopic1}!=null">
+						<h5>Top1:&nbsp;<a th:href="@{'/topic/'+${recommendtopic1.topicid}}" style="color: black;text-decoration: none"><span th:text="${recommendtopic1.title}"></span></a></h5>
+						</span>
+						<span th:if="${recommendtopic1}==null">
+						<h5>Top1:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendtopic2}!=null">
+						<h5>Top2:&nbsp;<a th:href="@{'/topic/'+${recommendtopic2.topicid}}" style="color: black;text-decoration: none"><span th:text="${recommendtopic2.title}"></span></a></h5>
+						</span>
+						<span th:if="${recommendtopic2}==null">
+						<h5>Top2:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendtopic3}!=null">
+						<h5>Top3:&nbsp;<a th:href="@{'/topic/'+${recommendtopic3.topicid}}" style="color: black;text-decoration: none"><span th:text="${recommendtopic3.title}"></span></a></h5>
+						</span>
+						<span th:if="${recommendtopic3}==null">
+						<h5>Top3:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendtopic4}!=null">
+						<h5>Top4:&nbsp;<a th:href="@{'/topic/'+${recommendtopic4.topicid}}" style="color: black;text-decoration: none"><span th:text="${recommendtopic4.title}"></span></a></h5>
+						</span>
+						<span th:if="${recommendtopic4}==null">
+						<h5>Top4:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendtopic5}!=null">
+							<h5>Top5:&nbsp;<a th:href="@{'/topic/'+${recommendtopic5.topicid}}" style="color: black;text-decoration: none"><span th:text="${recommendtopic5.title}"></span></a></h5>
+						</span>
+						<span th:if="${recommendtopic5}==null">
+						<h5>Top5:&nbsp;暂无数据</h5>
+						</span>
+					</tr>
+					<h4 style="color: violet;">五月小组榜 TOP5</h4>
+					<tr >
+						<span th:if="${recommendgroup1}!=null">
+						<h5>Top1:&nbsp;<a th:href="@{'/group/'+${recommendgroup1.groupid}}" style="color: black;text-decoration: none"><span th:text="${recommendgroup1.groupname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendgroup1}==null">
+						<h5>Top1:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendgroup2}!=null">
+						<h5>Top2:&nbsp;<a th:href="@{'/group/'+${recommendgroup2.groupid}}" style="color: black;text-decoration: none"><span th:text="${recommendgroup2.groupname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendgroup2}==null">
+						<h5>Top2:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendgroup3}!=null">
+						<h5>Top3:&nbsp;<a th:href="@{'/group/'+${recommendgroup3.groupid}}" style="color: black;text-decoration: none"><span th:text="${recommendgroup3.groupname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendgroup3}==null">
+						<h5>Top3:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendgroup4}!=null">
+						<h5>Top4:&nbsp;<a th:href="@{'/group/'+${recommendgroup4.groupid}}" style="color: black;text-decoration: none"><span th:text="${recommendgroup4.groupname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendgroup4}==null">
+						<h5>Top4:&nbsp;暂无数据</h5>
+						</span>
+						<span th:if="${recommendgroup5}!=null">
+							<h5>Top5:&nbsp;<a th:href="@{'/group/'+${recommendgroup5.groupid}}" style="color: black;text-decoration: none"><span th:text="${recommendgroup5.groupname}"></span></a></h5>
+						</span>
+						<span th:if="${recommendgroup5}==null">
+						<h5>Top5:&nbsp;暂无数据</h5>
+						</span>
+					</tr>
+				</div>
+				
+			</div>
+			<!--流行书籍模块，需要添加书的封面和评分等内容,点击后需要跳转到具体页面，点击名称可以跳到书籍主页-->
+			<div style="margin-top: 50px;">	
+				<a th:href="@{/bookindex}" style="text-decoration:none"><h2 style="color: teal;" >流行书籍</h2></a>
+				<template>
+					<el-tabs v-model="activeName" @tab-click="handleClick">
+					  <el-tab-pane label="新书速递" name="first" >
+						<div id = "one">
+							<table><tr>
+								<td th:each="book:${newbooklist}">
+									<a th:href="@{'/book/'+${book.bookid}}" style="color: #7d5d3b; text-decoration: none">
+										<img th:src="${book.bookimgpath}" alt=" "  height="100px" width="70px"  hspace="40" />
+										<h5 th:text="${book.bookname}"></h5>
+									</a>
+								</td>
+								</tr>
+							</table>
+						
+						</div>
+					  </el-tab-pane>
+					  <el-tab-pane label="好评如潮" name="second">
+						  <div id = "one">
+							  <table><tr>
+								  <td th:each="book:${recommendbooklist}">
+									  <a th:href="@{'/book/'+${book.bookid}}" style="color: #7d5d3b; text-decoration: none">
+										  <img th:src="${book.bookimgpath}" alt=" "  height="100px" width="70px"  hspace="40" />
+										  <h5 th:text="${book.bookname}"></h5>
+									  </a>
+								  </td>
+							  </tr>
+							  </table>
+
+						  </div>
+					  </el-tab-pane>
+					  <el-tab-pane label="本月流行" name="third">
+						  <div id = "one">
+							  <table><tr>
+								  <td th:each="book:${hotbooklist}">
+									  <a th:href="@{'/book/'+${book.bookid}}" style="color: #7d5d3b; text-decoration: none">
+										  <img th:src="${book.bookimgpath}" alt=" "  height="100px" width="70px"  hspace="40" />
+										  <h5 th:text="${book.bookname}"></h5>
+									  </a>
+								  </td>
+							  </tr>
+							  </table>
+
+						  </div>
+					  </el-tab-pane>
+<!--					  <el-tab-pane label="热门标签" name="fourth">-->
+
+<!--					  </el-tab-pane>-->
+					</el-tabs>
+				  </template>
+
+			</div>
+			<div style="margin-top: 50px;">	
+				<a th:href="@{/videoindex}" style="text-decoration:none"><h2 style="color:yellowgreen;" >流行影视</h2></a>
+				<template>
+					<el-tabs v-model="activeName2" @tab-click="handleClick">
+						<el-tab-pane label="影视上新" name="first" >
+							<div id = "one">
+								<table><tr>
+									<td th:each="video:${newvideolist}">
+										<a th:href="@{'/video/'+${video.videoid}}" style="color: #7d5d3b; text-decoration: none">
+											<img th:src="${video.videoimgpath}" alt=" "  height="100px" width="70px"  hspace="40" />
+											<h5 th:text="${video.videoname}"></h5>
+										</a>
+									</td>
+								</tr>
+								</table>
+
+							</div>
+						</el-tab-pane>
+						<el-tab-pane label="好评如潮" name="second">
+							<div id = "one">
+								<table><tr>
+									<td th:each="video:${recommendvideolist}">
+										<a th:href="@{'/video/'+${video.videoid}}" style="color: #7d5d3b; text-decoration: none">
+											<img th:src="${video.videoimgpath}" alt=" "  height="100px" width="70px"  hspace="40" />
+											<h5 th:text="${video.videoname}"></h5>
+										</a>
+									</td>
+								</tr>
+								</table>
+
+							</div>
+						</el-tab-pane>
+						<el-tab-pane label="本月流行" name="third">
+							<div id = "one">
+								<table><tr>
+									<td th:each="video:${hotvideolist}">
+										<a th:href="@{'/video/'+${video.videoid}}" style="color: #7d5d3b; text-decoration: none">
+											<img th:src="${video.videoimgpath}" alt=" "  height="100px" width="70px"  hspace="40" />
+											<h5 th:text="${video.videoname}"></h5>
+										</a>
+									</td>
+								</tr>
+								</table>
+
+							</div>
+						</el-tab-pane>
+						<!--					  <el-tab-pane label="热门标签" name="fourth">-->
+
+						<!--					  </el-tab-pane>-->
+					</el-tabs>
+				</template>
+			</div>
+			<div style="margin-top: 50px;">
+				<a th:href="@{/topicindex}" style="text-decoration:none"><h2 style="color:tomato;">热门话题</h2></a>
+				<template>
+					<el-tabs v-model="activeName3" @tab-click="handleClick">
+						<el-tab-pane label="近日热聊" name="first" >
+								<el-row >
+									<el-col th:each="topic:${hottopiclist}" :span="30">
+										<el-card style="border-radius: 30px;height:150px;width:230px;text-space: 200px">
+											<a th:href="@{'/topic/'+${topic.topicid}}" style="color: #7d5d3b; text-decoration: none">
+												<p><b style="font-size: small;" th:text="${topic.title}"></b></p>
+												<span th:text="${topic.intro}" style="font-size: small;width:200px;height:52px;word-wrap: break-word; word-break: normal; overflow:hidden;text-overflow:ellipsis;display:block">
+								</span>
+											</a>
+										</el-card>
+									</el-col>
+								</el-row>
+
+						</el-tab-pane>
+						<el-tab-pane label="新鲜出炉" name="second">
+								<el-row >
+									<el-col th:each="topic:${newtopiclist}" :span="30">
+										<el-card style="border-radius: 30px;height: 150px;width:230px;text-space: 200px">
+											<a th:href="@{'/topic/'+${topic.topicid}}" style="color: #7d5d3b; text-decoration: none">
+												<p><b style="font-size: small" th:text="${topic.title}"></b></p>
+												<span th:text="${topic.intro}" style="font-size: small;width:200px;height:52px; word-wrap: break-word; word-break: normal;overflow:hidden;text-overflow:ellipsis;display:block">
+								</span>
+											</a>
+										</el-card>
+									</el-col>
+								</el-row>
+
+						</el-tab-pane>
+					</el-tabs>
+				</template>
+			</div>
+			<div style="margin-top: 50px;">	
+				<a th:href="@{/groupindex}" style="text-decoration:none"><h2 style="color: violet;">热门小组</h2></a>
+				<template>
+					<el-tabs v-model="activeName4" @tab-click="handleClick">
+						<el-tab-pane label="值得逛逛" name="first" >
+							<el-row >
+								<el-col th:each="group:${recommendgrouplist}" :span="30">
+									<el-card style="border-radius: 30px;height:300px;width:230px;text-space: 200px;">
+										<a th:href="@{'/group/'+${group.groupid}}" style="color: #7d5d3b; text-decoration: none">
+											<p><b style="font-size: small;" th:text="${group.groupname}"></b></p>
+											<span th:text="${group.intro}" style="font-size: small;width:200px;height:200px;word-wrap: break-word; word-break: normal; overflow:hidden;text-overflow:ellipsis;display:block">
+								</span>
+										</a>
+									</el-card>
+								</el-col>
+							</el-row>
+
+						</el-tab-pane>
+						<el-tab-pane label="等你加入" name="second">
+							<el-row >
+								<el-col th:each="group:${newgrouplist}" :span="30">
+									<el-card style="border-radius: 30px;height:300px;width:230px;text-space: 200px">
+										<a th:href="@{'/group/'+${group.groupid}}" style="color: #7d5d3b; text-decoration: none">
+											<p><b style="font-size: small;" th:text="${group.groupname}"></b></p>
+											<span th:text="${group.intro}" style="font-size: small;width:200px;height:200px; word-wrap: break-word; word-break: normal;overflow:hidden;text-overflow:ellipsis;display:block">
+								</span>
+										</a>
+									</el-card>
+								</el-col>
+							</el-row>
+
+						</el-tab-pane>
+					</el-tabs>
+				</template>
+			</div>
+		
+			
+			
+		</div>
+
+
+	 
+</div>
+
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+			activeName: 'first',
+			activeName2: 'first',
+			activeName3: 'first',
+			activeName4: 'first',
+					  input:'',
+			activeIndex: '',
+            hotBooks: [{
+							        BookCover:'',
+            　　　　　　BookName: '2016-05-04',
+            　　　　　　Author: '王小虎2',
+            　　　　　　Score: '上海市普陀区金沙江路 1517 弄'
+            　　　　}],
+						recommendedBooks: [{
+						　　　　　　BookName: '2016-05-04',
+						　　　　　　Author: '王小虎2',
+						　　　　　　Score: '上海市普陀区金沙江路 1517 弄'
+						　　　　}]
+        },
+		methods: {
+        	gogogo(){
+				 const index = this.$refs.carousel.activeIndex;
+        		if (index==0){
+        			window.location.href='/bookindex';
+				}
+				if (index==1){
+					window.location.href='/videoindex';
+				}
+				if (index==2){
+					window.location.href='/topicindex';
+				}
+				if (index==4){
+					window.location.href='/groupindex';
+				}
+
+			}
+		}
+       });
+</script>
+
+</body>
+</html>

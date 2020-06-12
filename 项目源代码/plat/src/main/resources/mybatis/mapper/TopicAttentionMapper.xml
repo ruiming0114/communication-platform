@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.TopicAttentionMapper">
+    <select id="isAttention" resultType="TopicAttention" parameterType="int">
+        select * from topicattention where topicid=#{topicid} and userid=#{userid}
+    </select>
+
+    <select id="queryAttentionListByTopic" resultType="User" parameterType="int">
+        select mybatis.user.* from topicattention,mybatis.user where topicattention.userid=mybatis.user.userid and topicattention.topicid=#{topicid}
+    </select>
+
+    <select id="queryAttentionListByUser" resultType="Topic" parameterType="int">
+        select topic.* from topic,topicattention where topic.topicid=topicattention.topicid and topicattention.userid=#{userid}
+    </select>
+
+    <insert id="addTopicAttention" parameterType="TopicAttention">
+        insert into topicattention(topicid,userid) values (#{topicid},#{userid})
+    </insert>
+
+    <delete id="deleteTopicAttention" parameterType="int">
+        delete from topicattention where topicid=#{topicid} and userid=#{userid}
+    </delete>
+
+    <select id="queryAttentionListByTopicid" resultType="TopicAttention" parameterType="int">
+        select * from topicattention where topicid=#{topicid}
+    </select>
+
+</mapper>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+<style type="text/css" >
+	.text {
+	    font-size: 14px;
+	  }
+	
+	  .item {
+	    margin-bottom: 18px;
+	  }
+	a{
+		color: black;
+		text-decoration: none;
+	}
+	a:hover{
+		color: #555555;
+	}
+	
+	a:active{
+		color: #555555;
+	}
+	  .clearfix:before,
+	  .clearfix:after {
+	    display: table;
+	    content: "";
+	  }
+	  .clearfix:after {
+	    clear: both
+	  }
+	
+	  .box-card {
+			margin-top: 10px;
+	    width: 300px;
+	  }
+	#content{
+		display: block;
+		float: left;
+	}
+	#body-left{
+		float: left;
+	}
+	#body-right{
+		float:right;
+	}
+</style>
+
+</head>
+<body style="margin: 0;">
+<div id="app">
+   <div th:insert="~{commons/common::topbar-login}"></div>
+	   <div id = "box">
+		<el-container direction="vertical">
+			<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+				<h1 style="color: violet;font-size:35px;margin-left: 5px; margin-top: 3px;">小 组 G r o u p</h1>
+			</el-header>
+			<el-main style="background-color: white;text-align: left;opacity: 0.95;">
+				<div id="forms">
+
+					<div id="content">
+						<div id="body-left">
+							<span style="margin-left: 0px;margin-top:10px;font-size:150%;">我的帖子</span>
+							<br><br>
+
+							<div class="block">
+										<el-table :data="MyGroupPost"
+								 style="width: 800px;min-height: 600px; margin-left: 30px;float: left;">
+											'<el-table-column prop="grouppostid" v-if="show">
+										</el-table-column>
+								  <el-table-column prop="title"  label="标题" width="250px">
+										</el-table-column>
+										<el-table-column prop="addtime" label="发布时间" width="200px">
+										</el-table-column>
+													<el-table-column prop="groupname" label="所属小组" width="200px">
+													</el-table-column>
+													<el-table-column  width="100px">
+														<template slot-scope="scope">
+														 <el-button
+															size="mini" icon="el-icon-monitor" @click="goPost(scope.row.grouppostid)"> 查看</el-button>
+														</template>
+													</el-table-column>
+							　　</el-table>
+							</div>
+
+						</div>
+							<div id="body-right" style="margin-right: 100px">
+								<span style="margin-left: 0px;margin-top:10px;font-size:150%;">我的小组</span>
+								<br><br>
+								<el-card class="box-card" style="height: 600px">
+								  <div v-for="o in MyGroup" :key="o" class="text item">
+									  <a @click="goGroup(o.groupid)" style="cursor:pointer">{{o.groupname}}</a>
+								  </div>
+								</el-card>
+							</div>
+						<el-pagination
+								style="margin-left: 150px; float: left;"
+								@size-change="size"
+								@current-change="page"
+								:current-page="currentPage"
+								:page-size="pageSize"
+								:page-sizes="[4,10,20]"
+								layout="total, sizes, prev, pager, next, jumper"
+								:total="total">
+						</el-pagination>
+							</div>
+						</div>
+						
+					</div>
+				
+				</div>
+			</el-main>
+		</el-container>
+		
+		
+	</div>
+    
+</div>
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+			show:false,
+			input:'',
+			async:false,
+			total: [[${total_size}]],
+			pageSize:10,
+			currentPage: 1,
+			activeIndex2:1,
+
+            search_word: "",
+						<!-- 从Group,GroupPost表中提取数据 -->
+            MyGroupPost: [
+						],
+			GroupName:[],
+            MyGroup:['111','222','333']
+        },
+        methods:{
+        	goPost(id){
+        		window.location.href="/grouppost/"+id;
+			},
+			goGroup(id){
+        		window.location.href="/group/"+id;
+			},
+			async page(currentPage) {
+				this.currentPage = currentPage;
+				const _this = this;
+
+				await axios.get('/queryMyGroupPost_GroupID_to_GroupName/'+_this.currentPage+'/'+_this.pageSize).then(function (resp) {
+							console.log(resp.data);
+							_this.GroupName = resp.data;
+						}
+				);
+				await axios.get('/queryMyGroupPost/'+ _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+							_this.MyGroupPost = resp.data;
+							for (var i = 0; i < _this.MyGroupPost.length; i++) {
+								_this.MyGroupPost[i].groupname = _this.GroupName[i].groupname;
+							}
+						}
+				);
+			},
+			async size(pageSize) {
+				this.pageSize = pageSize;
+				const _this = this;
+
+				await axios.get('/queryMyGroupPost_GroupID_to_GroupName/'+_this.currentPage+'/'+_this.pageSize).then(function (resp) {
+							console.log(resp.data);
+							_this.GroupName = resp.data;
+						}
+				);
+				await axios.get('/queryMyGroupPost/'+ _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+							_this.MyGroupPost = resp.data;
+							for (var i = 0; i < _this.MyGroupPost.length; i++) {
+								_this.MyGroupPost[i].groupname = _this.GroupName[i].groupname;
+							}
+						}
+				);
+			}
+
+        },
+		async created(){
+			const _this = this;
+
+			await axios.get('/queryMyGroupPost_GroupID_to_GroupName/'+_this.currentPage+'/'+_this.pageSize).then(function (resp) {
+						console.log(resp.data);
+						_this.GroupName = resp.data;
+					}
+			);
+			await axios.get('/queryMyGroupPost/'+ _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+						_this.MyGroupPost = resp.data;
+						for (var i = 0; i < _this.MyGroupPost.length; i++) {
+							_this.MyGroupPost[i].groupname = _this.GroupName[i].groupname;
+						}
+					}
+			);
+			await axios.get('/queryMyGroup').then(function (resp) {
+						_this.MyGroup = resp.data;
+					}
+			);
+
+		}
+
+    });
+</script>
+</body>
+</html>

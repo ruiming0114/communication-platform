@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="topbar-login">
+    <script type="text/javascript">
+        function searchBook() {
+            var s = document.getElementById("searchWord").value;
+            if (s.length==0){
+                alert("请输入搜索内容");
+            }
+            else {
+                window.location.href='/checkBook/'+s;
+            }
+        }
+        function searchVideo() {
+            var s = document.getElementById("searchWord").value;
+            if (s.length==0){
+                alert("请输入搜索内容");
+            }
+            else {
+                window.location.href='/checkVideo/'+s;
+            }
+        }
+        function searchTopic() {
+            var s = document.getElementById("searchWord").value;
+            if (s.length==0){
+                alert("请输入搜索内容");
+            }
+            else {
+                window.location.href='/toCheckTopic/'+s;
+            }
+        }
+        function searchGroup() {
+            var s = document.getElementById("searchWord").value;
+            if (s.length==0){
+                alert("请输入搜索内容");
+            }
+            else {
+                window.location.href='/toCheckGroup/'+s;
+            }
+        }
+        function searchAll() {
+            var s = document.getElementById("searchWord").value;
+            if (s.length==0){
+                alert("请输入搜索内容");
+            }
+            else {
+                window.location.href='/toCheckAll/'+s;
+            }
+        }
+    </script>
+
+    <el-menu
+            :default-active="activeIndex2"
+            class="el-menu-demo"
+            mode="horizontal"
+            @select="handleSelect"
+            background-color="#3E3333"
+            text-color="#fff"
+            active-text-color="#6C5C5C"
+            style="width: 1500px; margin:0px">
+        <el-menu-item>
+            <div>
+                <img th:src="@{/background/logo1.png}" style=" margin:0px;width: 160px; height: 52px;"/>
+            </div>
+        </el-menu-item>
+        <el-menu-item>
+            <div>
+                <el-input placeholder="请输入搜索内容"
+                          v-model="input"
+                          size="small"
+                          style="margin-left:35px;width:230px"
+                id="searchWord">
+                    <el-select slot="append">
+                        <el-option> <a href="JavaScript: searchAll()" style="text-decoration: none;color: #7d5d3b;">全站搜索</a></el-option>
+                        <el-option ><a href="JavaScript: searchBook()" style="text-decoration: none;color: #7d5d3b;">图书搜索</a></el-option>
+                        <el-option ><a href="JavaScript: searchVideo()" style="text-decoration: none;color: #7d5d3b;">影视搜索</a></el-option>
+                        <el-option ><a href="JavaScript: searchTopic()" style="text-decoration: none;color: #7d5d3b;">话题搜索</a></el-option>
+                        <el-option ><a href="JavaScript: searchGroup()" style="text-decoration: none;color: #7d5d3b;">小组搜索</a></el-option>
+                    </el-select>
+                </el-input>
+            </div>
+        </el-menu-item>
+        <el-menu-item index="1" style="margin-left: 0px;"><a th:href="@{/index}"style="text-decoration: none">主 页 H o m e</a></el-menu-item>
+        <el-menu-item index="2" ><a th:href="@{/bookindex}" style="text-decoration: none">书 籍 B o o k</a></el-menu-item>
+        <el-menu-item index="3" ><a th:href="@{/videoindex}"style="text-decoration: none">影 视 V i d e o</a></el-menu-item>
+        <el-menu-item index="4" ><a th:href="@{/topicindex}"style="text-decoration: none">话 题 T o p i c</a></el-menu-item>
+        <el-menu-item index="5" ><a th:href="@{/groupindex}"style="text-decoration: none">小 组 G r o u p</a></el-menu-item>
+        <el-submenu index="6" >
+            <template slot="title">我 的 主 页</template>
+            <el-menu-item index="6-1" ><a th:href="@{'/toMyPersonalIndex/'+${session.loginUser.userid}}" style="color: white; text-decoration: none">个 人 中 心 ( P e r s o n a l ) </a> </el-menu-item>
+            <el-menu-item index="6-2" ><a th:href="@{/toMybookreview}" style="color: white; text-decoration: none">我 的 书 评 ( B o o k R e v i e w ) </a> </el-menu-item>
+            <el-menu-item index="6-3" ><a th:href="@{/toMyvideoreview}" style="color: white;text-decoration: none">我 的 影 评 ( V i d e o R e v i e w ) </a></el-menu-item>
+            <el-menu-item index="6-4" ><a th:href="@{/toMyTopic}" style="color: white;text-decoration: none">我 的 话 题 ( T o p i c ) </a></el-menu-item>
+            <el-menu-item index="6-5" ><a th:href="@{/toMyGroup}" style="color: white;text-decoration: none">我 的 小 组 ( G r o u p ) </a></el-menu-item>
+            <el-menu-item index="6-7" ><a th:href="@{/logout}"  style="color: white;text-decoration: none">退 出 登 录 ( Q u i t ) </a></el-menu-item>
+        </el-submenu>
+    </el-menu>
+
+    <script>
+        export default {
+            data() {
+                return {
+                    input: "",
+                    activeIndex: '1',
+                    activeIndex2: '1'
+                };
+            },
+            methods: {
+                handleSelect(key, keyPath) {
+                    console.log(key, keyPath);
+                }
+            }
+        }
+    </script>
+</div>
+
+<div th:fragment="topbar-nologin">
+    <script type="text/javascript">
+        function searchBook() {
+            var s = document.getElementById("searchWord").value;
+            if (s.length==0){
+                alert("请输入搜索内容");
+            }
+            else {
+                window.location.href='/checkBook/'+s;
+            }
+        }
+        function searchVideo() {
+            var s = document.getElementById("searchWord").value;
+            if (s.length==0){
+                alert("请输入搜索内容");
+            }
+            else {
+                window.location.href='/checkVideo/'+s;
+            }
+        }
+        function searchTopic() {
+            var s = document.getElementById("searchWord").value;
+            if (s.length==0){
+                alert("请输入搜索内容");
+            }
+            else {
+                window.location.href='/toCheckTopic/'+s;
+            }
+        }
+        function searchGroup() {
+            var s = document.getElementById("searchWord").value;
+            if (s.length==0){
+                alert("请输入搜索内容");
+            }
+            else {
+                window.location.href='/toCheckGroup/'+s;
+            }
+        }
+        function searchAll() {
+            var s = document.getElementById("searchWord").value;
+            if (s.length==0){
+                alert("请输入搜索内容");
+            }
+            else {
+                window.location.href='/toCheckAll/'+s;
+            }
+        }
+    </script>
+    <el-menu
+            :default-active="activeIndex2"
+            class="el-menu-demo"
+            mode="horizontal"
+            @select="handleSelect"
+            background-color="#3E3333"
+            text-color="#fff"
+            active-text-color="#6C5C5C"
+            style="width: 1500px;">
+        <el-menu-item>
+            <div>
+                <img th:src="@{/background/logo1.png}" style=" margin:0px;width: 160px; height: 52px;"/>
+            </div>
+        </el-menu-item>
+        <el-menu-item>
+            <div>
+                <el-input placeholder="请输入搜索内容"
+                          v-model="input"
+                          size="small"
+                          style="margin-left:35px;width:230px"
+                          id="searchWord">
+                    <el-select slot="append" >
+                        <el-option> <a href="JavaScript: searchAll()" style="text-decoration: none;color: #7d5d3b;">全站搜索</a></el-option>
+                        <el-option ><a href="JavaScript: searchBook()" style="text-decoration: none;color: #7d5d3b;">图书搜索</a></el-option>
+                        <el-option ><a href="JavaScript: searchVideo()" style="text-decoration: none;color: #7d5d3b;">影视搜索</a></el-option>
+                        <el-option ><a href="JavaScript: searchTopic()" style="text-decoration: none;color: #7d5d3b;">话题搜索</a></el-option>
+                        <el-option ><a href="JavaScript: searchGroup()" style="text-decoration: none;color: #7d5d3b;">小组搜索</a></el-option>
+                    </el-select>
+                </el-input>
+            </div>
+        </el-menu-item>
+        <el-menu-item index="1" style="margin-left: 0px;"><a th:href="@{/index}"style="text-decoration: none">主 页 H o m e</a></el-menu-item>
+        <el-menu-item index="2" ><a th:href="@{/bookindex}" style="text-decoration: none">书 籍 B o o k</a></el-menu-item>
+        <el-menu-item index="3" ><a th:href="@{/videoindex}"style="text-decoration: none">影 视 V i d e o</a></el-menu-item>
+        <el-menu-item index="4" ><a th:href="@{/topicindex}"style="text-decoration: none">话 题 T o p i c</a></el-menu-item>
+        <el-menu-item index="5" ><a th:href="@{/groupindex}"style="text-decoration: none">小 组 G r o u p</a></el-menu-item>
+        <el-menu-item index="6" >
+            <a th:href="@{/toLogin}"style="text-decoration: none">登 录 L o g i n</a>
+            </el-submenu>
+        </el-menu-item>
+    </el-menu>
+    <script>
+        export default {
+            data() {
+                return {
+                    input: '',
+                    activeIndex: '1',
+                    activeIndex2: '1'
+                };
+            },
+            methods: {
+                handleSelect(key, keyPath) {
+                    console.log(key, keyPath);
+                }
+            }
+        }
+    </script>
+
+</div>
+
+<div th:fragment="sidebar">
+    <el-aside style="width: 230px;">
+        <el-row class="tac">
+            <el-col :span="12">
+                <el-menu
+                        default-active="2"
+                        class="el-menu-vertical-demo"
+                        @open="handleOpen"
+                        @close="handleClose"
+                        background-color="#545c64"
+                        text-color="#fff"
+                        active-text-color="#ffd04b"
+                        style="width: 200px;float:left;overflow:hidden;clear:left;"
+                >
+                    <el-submenu index="1">
+                        <template slot="title">
+                            <i class="el-icon-s-home"></i>
+                            <span>空 间 主 页</span>
+                        </template>
+                        <el-menu-item-group>
+                            <el-menu-item index="1-1"><a th:href="@{/toMybookreview}" style="color: white; text-decoration: none">我 的 书 评</a></el-menu-item>
+                            <el-menu-item index="1-2"><a th:href="@{/toMyvideoreview}"style="color: white;text-decoration: none">我 的 影 评 </a></el-menu-item>
+                            <el-menu-item index="1-3"><a th:href="@{/toMyTopic}" style="color: white;text-decoration: none">我 的 话 题 </a></el-menu-item>
+                            <el-menu-item index="1-4"><a th:href="@{/toMyGroup}" style="color: white;text-decoration: none">我 的 小 组</a></el-menu-item>
+                        </el-menu-item-group>
+                    </el-submenu>
+                    <el-submenu index="4">
+                        <template slot="title">
+                            <i class="el-icon-setting"></i>
+                            <span>设 置 帮 助</span>
+                        </template>
+                        <el-menu-item-group>
+                            <el-menu-item index="4-1"><a th:href="@{/toAlterInfo}" style="color: white;text-decoration: none">修 改 信 息</a></el-menu-item>
+                            <el-menu-item index="4-2"><a th:href="@{/AboutUs}" style="color: white;text-decoration: none">关 于 我 们</a></el-menu-item>
+                        </el-menu-item-group>
+                    </el-submenu>
+                    <el-submenu index="5">
+                        <template slot="title">
+                            <i class="el-icon-s-check"></i>
+                            <span>管 理 员 功 能</span>
+                        </template>
+                        <el-menu-item-group>
+                            <el-menu-item index="5-1"><a th:href="@{/toAdminister_Book}" style="color: white;text-decoration: none">图 书 管 理</a></el-menu-item>
+                            <el-menu-item index="5-2"><a th:href="@{/toAdminister_Video}"style="color: white;text-decoration: none">影 视 管 理</a></el-menu-item>
+                            <el-menu-item index="5-3"><a th:href="@{/toAdminister_Topic}"style="color: white;text-decoration: none">话 题 管 理</a></el-menu-item>
+                            <el-menu-item index="5-4"><a th:href="@{/toAdminister_Group}" style="color: white;text-decoration: none">小 组 管 理</a></el-menu-item>
+                            <el-menu-item index="5-5"><a th:href="@{/toAdminister_Report}"style="color: white;text-decoration: none">举 报 管 理</a></el-menu-item>
+                            <el-menu-item index="5-6"><a th:href="@{/toAdminister_User}"style="color: white;text-decoration: none">用 户 管 理</a></el-menu-item>
+                        </el-menu-item-group>
+                    </el-submenu>
+                </el-menu>
+            </el-col>
+        </el-row>
+    </el-aside>
+    <script>
+        export default {
+            methods: {
+                handleOpen(key, keyPath) {
+                    console.log(key, keyPath);
+                },
+                handleClose(key, keyPath) {
+                    console.log(key, keyPath);
+                }
+            }
+        }
+    </script>
+</div>
+
+</html>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.TopicCommentReportMapper">
+    <select id="queryTopicCommentReportListByComment" parameterType="int" resultType="TopicCommentReport">
+        select * from topiccommentreport where commentid=#{commentid}
+    </select>
+
+    <select id="queryTopicCommentReportById" resultType="TopicCommentReport" parameterType="int">
+        select * from topiccommentreport where topiccommentreportid=#{topiccommentreportid}
+    </select>
+
+    <select id="queryTopicCommentReportList" resultType="TopicCommentReport">
+        select * from topiccommentreport order by deal asc
+    </select>
+
+    <select id="queryUndealTopicCommentReportList" resultType="TopicCommentReport">
+        select * from topiccommentreport where deal=0;
+    </select>
+
+    <select id="queryTopicCommentReportListByUser" resultType="TopicCommentReport" parameterType="int">
+        select * from topiccommentreport where userid=#{userid}
+    </select>
+
+    <insert id="addTopicCommentReport" parameterType="TopicCommentReport">
+        insert into topiccommentreport(topiccommentreportid,commentid,userid,title,content,addtime,deal) values (#{topiccommentreportid},#{commentid},#{userid},#{title},#{content},#{addtime},#{deal})
+    </insert>
+
+    <update id="updateTopicCommentReport" parameterType="TopicCommentReport">
+        update topiccommentreport set commentid=#{commentid},userid=#{userid},title=#{title},content=#{content},addtime=#{addtime},deal=#{deal} where topiccommentreportid=#{topiccommentreportid}
+    </update>
+
+    <delete id="deleteTopicCommentReport" parameterType="int">
+        delete from topiccommentreport where topiccommentreportid=#{topiccommentreportid}
+    </delete>
+
+    <select id="cnt" resultType="int">
+        select count(*) from topiccommentreport
+    </select>
+
+    <select id="max" resultType="int">
+        select ifnull(max(topiccommentreportid),0) from topiccommentreport
+    </select>
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.VideoReviewLikedMapper">
+    <select id="getVideoReviewLikedByUserAndReview" parameterType="int" resultType="VideoReviewLiked">
+        select * from videoreviewliked where userid=#{userid} and videoreviewid=#{videoreviewid}
+    </select>
+
+    <select id="queryVideoReviewLikedByVideoReview" parameterType="int" resultType="VideoReviewLiked">
+        select * from videoreviewliked where videoreviewid=#{videoreviewid}
+    </select>
+
+    <select id="getLikeStatus" parameterType="int" resultType="int">
+        select count(*) from videoreviewliked where videoreviewid=#{videoreviewid} and status=1
+    </select>
+
+    <select id="getAgainstStatus" parameterType="int" resultType="int">
+        select count(*) from videoreviewliked where videoreviewid=#{videoreviewid} and status=-1
+    </select>
+
+    <insert id="addVideoReviewLiked" parameterType="VideoReviewLiked">
+        insert into videoreviewliked (userid,videoreviewid,status) values (#{userid},#{videoreviewid},#{status})
+    </insert>
+
+    <update id="updateVideoReviewLiked" parameterType="VideoReviewLiked">
+        update videoreviewliked set status=#{status} where videoreviewid=#{videoreviewid} and userid=#{userid}
+    </update>
+
+    <delete id="deleteVideoReviewLiked" parameterType="int">
+        delete from videoreviewliked where videoreviewid=#{videoreviewid} and userid=#{userid}
+    </delete>
+</mapper>

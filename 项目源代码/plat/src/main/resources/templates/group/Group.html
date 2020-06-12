@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+
+
+    <style type="text/css" >
+	.text {
+	    font-size: 14px;
+	  }
+		.item {
+		  margin-bottom: 18px;
+		}
+			
+		.clearfix:before,
+		.clearfix:after {
+		  display: table;
+		  content: "";
+		}
+		.clearfix:after {
+		  clear: both
+		}
+		.el-header, .el-footer {
+         background-color: #B3C0D1;
+         color: #333;
+         text-align: center;
+         line-height: 60px;
+         }
+         .el-main {
+           display: block;
+         background-color: #E9EEF3;
+         color: #333;
+           min-height: 700px;	
+         }
+
+</style>
+
+</head>
+<body style="margin: 0;">
+<div id="app">
+	<div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+	<div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+		<div id = "box">
+			<el-container direction="vertical">
+				<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+					<h1 style="color: violet;font-size:35px;margin-left: 5px; margin-top: 3px;">小 组 G r o u p</h1>
+				</el-header>
+				<input type="hidden" id="groupid" th:value="${currentgroup.groupid}"/>
+				<input type="hidden" id="userid" th:value="${currentuserid}"/>
+                <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                    <div id="forms">
+						<div id="content">
+							<div id="up">
+						<div id="up-left" style="float: left; margin-top: 30px;">
+									<el-card class="box-card" style="width: 1200px;margin-left: 10px;" >
+									  <div slot="header" class="clearfix">
+										<span style="font-size: 130%;">{{Group.GroupName}}</span>
+										  <el-button size="medium" style="float: right" icon="el-icon-view" @click="toMember"> 查看小组成员</el-button>
+										  <span style=" float: right">&nbsp;&nbsp;</span>
+										  <span th:if="${currentuserid}!=-1 and ${isjoin}==-1">
+										  <el-button size="medium" style="float: right" icon="el-icon-user" @click="joinGroup"> 加入小组</el-button>
+										  </span>
+										  <span th:if="${currentuserid}!=-1 and (${isjoin}==0 or ${isjoin}==1)">
+										  <el-button size="medium" style="float: right" icon="el-icon-user-solid" @click="outGroup"> 退出小组</el-button>
+										  </span>
+										  <span th:if="${currentuserid}==-1">
+										  <el-button size="medium" style="float: right" icon="el-icon-user" @click="nologin_join"> 加入小组</el-button>
+										  </span>
+									  </div>
+									  <div class="text item">
+											{{Group.content}}
+									  </div>
+									</el-card>
+							<br>
+							<el-button style="margin-left: 10px;" size="medium" class="el-icon-back" @click="back"> 返回</el-button>
+							<span th:if="${currentuserid}!=-1 and ${isjoin}!=-1">
+								<el-button style="margin-left: 10px;" size="medium" class="el-icon-edit-outline" @click="toAdd"> 发帖</el-button>
+							</span>
+							<span th:if="${currentuserid}!=-1 and ${isjoin}==-1">
+								<el-button style="margin-left: 10px;" size="medium" class="el-icon-edit-outline" @click="nojoin"> 发帖</el-button>
+							</span>
+							<span th:if="${currentuserid}==-1">
+								<el-button style="margin-left: 10px;" size="medium" class="el-icon-edit-outline" @click="nologin_add"> 发帖</el-button>
+							</span>
+							<el-divider><i class="el-icon-postcard"></i> 小组帖子</el-divider>
+						</div>
+
+								</div>
+								<div id="down" style="width: 1200px;" >
+								
+									<el-table :data="GroupPost"
+										 style="width: 1200px; margin-left: 10px; "
+											 max-height="450px">
+										<el-table-column prop="grouppostid" width="10px;" v-if="show">
+										</el-table-column>
+										<el-table-column width="40px;">
+											<template slot-scope="scope">
+												<span v-if="scope.row.top=='1'"><i class="el-icon-upload2" style="color:cadetblue;"></i></span>
+											</template>
+										</el-table-column>
+										<el-table-column width="40px;">
+											<template slot-scope="scope">
+												<span v-if="scope.row.essence=='1'"><i class="el-icon-star-on" style="color: indianred"></i></span>
+											</template>
+										</el-table-column>
+											 <el-table-column prop="title" label="标题" width="350px;">
+											 </el-table-column>
+											 <el-table-column prop="addtime" label="发布日期" width="230px">
+											 </el-table-column>
+										<el-table-column prop="username" label="发贴人" width="150px">
+									</el-table-column>
+											 <el-table-column prop="ReplyNum" label="回帖数" width="200px">
+											 </el-table-column>
+										<el-table-column  width="150px" >
+											<template slot-scope="scope">
+												<el-button size="mini"  @click="go(scope.row)" class="el-icon-monitor"> 查看</el-button>
+											</template>
+										</el-table-column>
+
+									　　</el-table>
+								</div>
+								</div>
+					</div>
+                    
+                    </div>
+                </el-main>
+			</el-container>
+			
+			
+		</div>
+    
+</div>
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+        	input:'',
+			async:false,
+            search_word: "",
+			show:false,
+						<!-- 从Group,GroupPost表中提取数据 -->
+            GroupPost: [{
+				username: '',
+			}
+						],
+            Group:{
+							GroupName:"[[${currentgroup.groupname}]]",
+							content:"[[${currentgroup.intro}]]",
+						},
+			Users:[
+				{
+					username:''
+				}
+			],
+			Replys:[]
+        },
+        methods:{
+			go(row){
+				window.location.href='/grouppost/'+row.grouppostid;
+			},
+			back(){
+				window.location.href="/groupindex";
+			},
+			toAdd(){
+				var groupid=document.getElementById("groupid").value;
+				window.location.href="/toAddGroupPost/"+groupid;
+			},
+			nologin_join(){
+				window.location.href="/nologin_joingroup";
+			},
+			nologin_add(){
+				window.location.href="/nologin_add";
+			},
+			joinGroup(){
+				var groupid=document.getElementById("groupid").value;
+				var userid=document.getElementById("userid").value;
+				window.location.href="/toJoinGroup?userid="+userid+"&groupid="+groupid;
+			},
+			outGroup(){
+				var groupid=document.getElementById("groupid").value;
+				var userid=document.getElementById("userid").value;
+				window.location.href="/toOutGroup?userid="+userid+"&groupid="+groupid;
+			},
+			nojoin(){
+				alert("请加入小组后再发帖");
+			},
+			toMember(){
+				var groupid=document.getElementById("groupid").value;
+				window.location.href="/toGroupMember/"+groupid;
+			}
+        },
+		async created(){
+			var groupid=document.getElementById("groupid").value;
+			const _this = this;
+			await axios.get('/queryGroupPost_UserID_to_Username/' + groupid).then(function (resp) {
+						_this.Users = resp.data;
+
+					}
+			);
+			await axios.get('/queryGroupPost_getReplyNum/' + groupid).then(function (resp) {
+						_this.Replys = resp.data;
+
+					}
+			);
+
+			await axios.get('/queryGroupPost/' + groupid).then(function (resp) {
+						_this.GroupPost = resp.data;
+				for (var i = 0; i < _this.GroupPost.length; i++) {
+					_this.GroupPost[i].username = _this.Users[i].username;
+					_this.GroupPost[i].ReplyNum = _this.Replys[i];
+					if (_this.GroupPost[i].top==true){
+						_this.GroupPost[i].top=1;
+					}
+					if (_this.GroupPost[i].essence==true){
+						_this.GroupPost[i].essence=1;
+					}
+				}
+					}
+			);
+
+			console.log(this.GroupPost);
+		}
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.BookReviewLikedMapper">
+    <select id="queryBookReviewLikedByBookReview" resultType="BookReviewLiked" parameterType="int">
+        select * from bookreviewliked where bookreviewid=#{bookreviewid}
+    </select>
+
+    <select id="getBookReviewLikedByUserAndReview" parameterType="int" resultType="BookReviewLiked">
+        select * from bookreviewliked where userid=#{userid} and bookreviewid=#{bookreviewid}
+    </select>
+
+    <select id="getLikeStatus" parameterType="int" resultType="int">
+        select count(*) from bookreviewliked where bookreviewid=#{bookreviewid} and status=1
+    </select>
+
+    <select id="getAgainstStatus" parameterType="int" resultType="int">
+        select count(*) from bookreviewliked where bookreviewid=#{bookreviewid} and status=-1
+    </select>
+
+    <insert id="addBookReviewLiked" parameterType="BookReviewLiked">
+        insert into bookreviewliked (userid,bookreviewid,status) values (#{userid},#{bookreviewid},#{status})
+    </insert>
+
+    <update id="updateBookReviewLiked" parameterType="BookReviewLiked">
+        update bookreviewliked set status=#{status} where bookreviewid=#{bookreviewid} and userid=#{userid}
+    </update>
+
+    <delete id="deleteBookReviewLiked" parameterType="int">
+        delete from bookreviewliked where bookreviewid=#{bookreviewid} and userid=#{userid}
+    </delete>
+</mapper>

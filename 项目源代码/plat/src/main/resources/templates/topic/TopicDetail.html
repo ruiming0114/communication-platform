@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+		<script src="https://unpkg.com/vue/dist/vue.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+        <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.staticfile.org/ionicons/2.0.1/css/ionicons.min.css"></script>
+    <link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+<style type="text/css" >
+	.el-header, .el-footer {
+	    background-color: #B3C0D1;
+	    color: #333;
+	    text-align: center;
+	    line-height: 60px;
+	  }
+	  .el-main {
+			display: block;
+	    background-color: #E9EEF3;
+	    color: #333;
+			min-height: 700px;	
+      }
+
+</style>
+
+</head>
+<body>
+<div id="app">
+    <div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+    <div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+        <!--中间为话题名称和话题描述，话题名称旁有“关注话题”按钮，
+            话题描述旁有“举报”按钮，点击举报按钮进入举报页面，
+            话题描述下有“发布我的想法”按钮，右侧有发起人信息。
+            用户点击“发布我的想法”按钮，下方展开一个输入框，可输入文字和上传图片。点击“发布”按钮，系统刷新页面。
+		-->
+		<div id = "box">
+			<el-container direction="vertical">
+				<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+					<h1 style="color: tomato; font-size:35px;margin-left: 5px; margin-top: 3px;">话 题 T o p i c</h1>
+				</el-header>
+                <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                    <el-card class="box-card">
+                        <input type="hidden" th:value="${currenttopic.topicid}" id="topicid" />
+                        <input type="hidden" th:value="${attention}" id="attention" />
+                        <div slot="header" class="clearfix">
+                            <b>[[${currenttopic.title}]]</b>
+                            <span th:if="${session.loginUser}==null">
+                                  <el-button style="float: right; " size="medium" class="el-icon-star-off" @click="nologin_att"> 关注话题</el-button>
+                            </span>
+                            <span th:if="${session.loginUser}!=null">
+                                 <span th:if="${attention}==0">
+                                <el-button style="float: right; " size="medium" class="el-icon-star-off" @click="attend"> 关注话题</el-button>
+                                </span>
+                                <span th:if="${attention}!=0">
+                                    <el-button style="float: right; " size="medium"  class="el-icon-star-on" @click="noattend">取消关注</el-button>
+                                </span>
+                            </span>
+                        </div>
+
+                        <div th:if="${session.loginUser}!=null">
+                            <input type="hidden" th:value="${currentuserid}" id="userid" />
+                       </div>
+                        <div>
+                            <span style="width:1180px;word-wrap: break-word; word-break: normal;">[[${currenttopic.intro}]]</span>
+
+                        </div>
+                        <br>
+                        <div>
+<!--                            <el-button size="mini" @click="back">返回</el-button>-->
+                            <el-button size="middle" icon="el-icon-back" @click="back"> 返回</el-button>
+                            <span th:if="${session.loginUser}!=null">
+                                <span th:if="${attention}==0">
+                                     <el-button size="middle" icon="el-icon-mic" @click="show_noatt"> 说点什么</el-button>
+                                </span>
+                                 <span th:if="${attention}!=0">
+                                    <el-button size="middle" icon="el-icon-mic" @click="show()"> 说点什么</el-button>
+                                 </span>
+                            </span>
+                            <span th:if="${session.loginUser}==null">
+                                <el-button size="middle" icon="el-icon-mic" @click="nologin"> 说点什么</el-button>
+                            </span>
+                            <span th:if="${session.loginUser}!=null">
+                            <el-button size="middle" icon="el-icon-thumb" @click="toReport"> 举报
+                            </el-button>
+                            </span>
+
+                            <span th:if="${session.loginUser}!=null">
+                                <span th:if="${currentuserperms}=='admin'">
+                                       <el-button  size="middle" @click="todelete" icon="el-icon-delete">删除</el-button>
+                                </span>
+                            </span>
+                            <div id="div1" style="display:none">
+                                <br>
+                            <div>
+                                <el-upload
+                                        :class="{hide:hideUpload}"
+                                        action="/upload"
+                                        accept=".jpg,.png"
+                                        list-type="picture-card"
+                                        :on-remove="handleRemove"
+                                        :on-success="successUpload"
+                                        :limit="4"
+                                        :file-list="fileList"
+                                        :on-change="onChange">
+                                    <i class="el-icon-plus"></i>
+                                </el-upload>
+                                <el-input style="width: 1170px; height: 40px; resize:none;" name="content" id="content" v-model="contentAdd" type="textarea" :rows="5">
+                                </el-input>  <br>  <br>  <br>
+                                <el-button style="margin-left: 1170px;margin-top: 8px" size="mini" icon="el-icon-s-promotion" @click="add"> 发表</el-button>
+                            </div>
+                        </div>
+                            </div>
+                        <br>
+                        <div v-for="comment in Comments" >
+                                    <!--需要调用数据库数据-->
+                                    <el-card class="box-card">
+                                        <div>
+                                        <h5 style="color: skyblue">{{comment.username}}</h5>
+                                            <el-image v-if="comment.imgpath1!='no'"
+                                                    :lazy='true'
+                                                      style="width:250px;height: 250px;border-radius: 6px"
+                                                      :src="comment.imgpath1">
+                                            </el-image>
+                                        <el-image v-if="comment.imgpath2!='no'"
+                                                  :lazy='true'
+                                                  style="width:250px;height: 250px;border-radius: 6px"
+                                                  :src="comment.imgpath2">
+                                        </el-image>
+                                        <el-image v-if="comment.imgpath3!='no'"
+                                                  :lazy='true'
+                                                  style="width:250px;height: 250px;border-radius: 6px"
+                                                  :src="comment.imgpath3">
+                                        </el-image>
+                                        <el-image v-if="comment.imgpath4!='no'"
+                                                  :lazy='true'
+                                                  style="width:250px;height: 250px;border-radius: 6px"
+                                                  :src="comment.imgpath4">
+                                        </el-image>
+                                        </div>
+                                        <div style="margin-top: 2px;width:1180px;word-wrap: break-word; word-break: normal;">
+                                          {{comment.content}}
+                                        </div>
+                                        
+                                        <div id="action" style="float: right;">
+                                            {{comment.addtime}}
+                                            &nbsp;
+                                            点赞数：{{comment.likenum}}
+                                            &nbsp;
+                                            <el-button  @click="toComment(comment.commentid)" icon="el-icon-search" size="mini"> 评论详情</el-button>
+                                    </div>
+                                      </el-card>
+                                </div>
+                      </el-card>
+                      
+                      <style>
+                        .text {
+                          font-size: 14px;
+                        }
+                      
+                        .item {
+                          margin-bottom: 18px;
+                        }
+                      
+                        .clearfix:before,
+                        .clearfix:after {
+                          display: table;
+                          content: "";
+                        }
+                        .clearfix:after {
+                          clear: both
+                        }
+                      
+                        .box-card {
+                          width: 480px;
+                        }
+                      </style>
+                </el-main>
+			</el-container>
+			
+			
+		</div>
+	 
+</div>
+
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+            hideUpload: false,
+            limitCount:4,
+            async: false,
+                contentAdd:'',
+					  input:'',
+                      search_word: "",
+								attitude:true,
+                Comments:[{
+    							username:"",
+    							Title:"",
+    							content:"",
+									date:"",
+									LikeNum:10,
+    						}],
+                Users:[],
+            fileList:[],
+            filePath:[],
+            },
+            methods:{
+                successUpload(response,file,fileList){
+                    this.filePath[fileList.length-1]='/images/'+file.name;
+                },
+                onChange(file,fileList){
+                    this.hideUpload = fileList.length >= this.limitCount;
+                },
+                handleRemove(file, fileList) {
+                    console.log(file, fileList);
+                    this.hideUpload = fileList.length >= this.limitCount;
+                },
+                toReport(){
+                    var topicid = document.getElementById("topicid").value;
+                    window.location.href="/toAddTopicReport/"+topicid;
+                },
+                nologin_att(){
+                    window.location.href="/toAdd_noLogin_att";
+                },
+                nologin(){
+                    window.location.href="/toAdd_noLogin";
+                },
+                back(){
+                    window.location.href="/topicindex";
+                },
+                attend(){
+                    alert("关注成功！");
+                    var topicid = document.getElementById("topicid").value;
+                    var userid= document.getElementById("userid").value;
+                    window.location.href="/addTopicAttention?userid="+userid+"&topicid="+topicid;
+                },
+                noattend(){
+                    alert("取消成功！");
+                    var topicid = document.getElementById("topicid").value;
+                    var userid= document.getElementById("userid").value;
+                    window.location.href="/deleteTopicAttention?userid="+userid+"&topicid="+topicid;
+                },
+                show_noatt(){
+                    alert("请先关注话题！");
+                },
+                show() {
+                    var value = document.getElementById("div1").style.display;
+                    if(value=="none")
+                    {
+                        document.getElementById("div1").style.display="block";
+                    }
+                    else
+                        document.getElementById("div1").style.display="none";
+                },
+                add(){
+                    const attention = document.getElementById("attention").value;
+                    if (attention==0){
+                        alert("请先关注话题！")
+                    }
+                    else {
+                        if (this.contentAdd.length!=0){
+                            alert("发布成功！");
+                            var topicid = document.getElementById("topicid").value;
+                            var userid= document.getElementById("userid").value;
+                            var imgpath1 = this.filePath[0]==null?'no':this.filePath[0];
+                            var imgpath2 = this.filePath[1]==null?'no':this.filePath[1];
+                            var imgpath3 = this.filePath[2]==null?'no':this.filePath[2];
+                            var imgpath4 = this.filePath[3]==null?'no':this.filePath[3];
+                            document.getElementById("div1").style.display="none";
+                            window.location.href="/AddTopicComment?topicid="+topicid+"&userid="+userid+"&content="+this.contentAdd+"&imgpath1="+imgpath1+"&imgpath2="+imgpath2+"&imgpath3="+imgpath3+"&imgpath4="+imgpath4;
+                        }
+                        else {
+                            alert("输入内容不能为空！");
+                        }
+                    }
+                },
+                toComment(id){
+                    window.location.href='/topiccomment/'+id;
+                },
+                todelete(){
+                    var topicid = document.getElementById("topicid").value;
+                    res=confirm("确认删除吗？所有与该内容相关的信息都会被删除，且无法恢复");
+                    if (res==true){
+                        alert("删除成功");
+                        window.location.href='/deleteTopic?topicid='+topicid;
+                    }
+                }
+            },
+            async created(){
+                const _this = this;
+                var topicid = document.getElementById("topicid").value;
+                await axios.get('/queryTopicCommentListByTopic_UserID_to_Username/' + topicid).then(function (resp) {
+                        _this.Users = resp.data;
+                    }
+                );
+                await axios.get('/queryTopicCommentListByTopic/'+topicid).then(function (resp) {
+                        _this.Comments = resp.data;
+                        for (var i = 0; i < _this.Comments.length; i++) {
+                            _this.Comments[i].username = _this.Users[i].username;
+                        }
+                    console.log(_this.Comments);
+                    }
+                );
+            }
+        });
+</script>
+<style>
+    .hide .el-upload--picture-card {
+        display: none;
+    }
+</style>
+</body>
+</html>

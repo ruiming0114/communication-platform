@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+		<script src="https://unpkg.com/vue/dist/vue.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+<style type="text/css" >
+	.el-header, .el-footer {
+	    background-color: #B3C0D1;
+	    color: #333;
+	    text-align: center;
+	    line-height: 60px;
+	  }
+	  .el-main {
+			display: block;
+	    background-color: #E9EEF3;
+	    color: #333;
+			min-height: 700px;	
+	  }
+</style>
+
+</head>
+<body>
+<div id="app">
+		<!--实现导航栏的美工和跳转-->
+	<div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+	<div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+		<!--左侧为“推荐话题，分类查看话题，我的话题”，为推荐给用户查看的新话题
+			右上方有检索话题的输入框和“检索”按钮
+			右侧有“发起新话题”按钮和一个热门话题列表(需要调用数据库数据)
+		-->
+		<div id = "box">
+			<el-container direction="vertical">
+				<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+					<h1 style="color: tomato; font-size:35px;margin-left: 5px; margin-top: 3px;">话 题 T o p i c</h1>
+				</el-header>
+				<el-container>
+				<!--右侧部分，推荐话题，分类查看话题，我的话题-->
+				  <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+					<template>
+						<el-tabs v-model="TactiveName" @tab-click="handleClick" >
+						  <el-tab-pane label="推 荐 话 题" name="first">
+							  <span  v-for="(topic,index) in hotTopics" :data="hotTopics">
+								  <el-card class="box-card" shadow="hover" style="border-radius: 4px;" >
+									  <div slot="header" class="clearfix">
+										  <b>{{topic.title}}</b>
+										  <el-button round style="float: right;" size="medium" class="el-icon-chat-dot-round" @click="go(topic.topicid)">
+											点击查看话题
+										  </el-button>
+									  </div>
+									  {{topic.intro}}
+									  <br>
+									  <br>
+									  <el-card v-if="index==0&& comment1" shadow="never" style="border-radius: 4px;">
+										  <i class="el-icon-chat-dot-square"></i>
+										  <span style="width:850px;overflow:hidden;text-overflow:ellipsis;display:block">
+											  {{comment1}}
+										  </span>
+									  </el-card>
+									  <el-card v-if="index==0 && comment2" shadow="never" style="border-radius: 4px; ">
+										  <i class="el-icon-chat-dot-square"></i>
+										  <span style="width:850px;overflow:hidden;text-overflow:ellipsis;display:block">
+											  {{comment2}}
+										  </span>
+									  </el-card >
+									  <el-card v-if="index==1 && comment3" shadow="never" style="border-radius: 4px; ">
+										  <i class="el-icon-chat-dot-square"></i>
+										  <span style="width:850px;overflow:hidden;text-overflow:ellipsis;display:block">
+											  {{comment3}}
+										  </span>
+									  </el-card>
+									  <el-card v-if="index==1&& comment4" shadow="never" style="border-radius: 4px; ">
+										  <i class="el-icon-chat-dot-square"></i>
+										  <span style="width:850px;overflow:hidden;text-overflow:ellipsis;display:block">
+											  {{comment4}}
+										  </span>
+									  </el-card>
+									  <el-card v-if="index==2&& comment5" shadow="never" style="border-radius: 4px; ">
+										  <i class="el-icon-chat-dot-square"></i>
+										  <span style="width:850px;overflow:hidden;text-overflow:ellipsis;display:block">
+											  {{comment5}}
+										  </span>
+									  </el-card>
+									  <el-card v-if="index==2 && comment6" shadow="never" style="border-radius: 4px;">
+										  <i class="el-icon-chat-dot-square"></i>
+										  <span style="width:850px;overflow:hidden;text-overflow:ellipsis;display:block">
+											  {{comment6}}
+										  </span>
+									  </el-card>
+									  <el-card v-if="index==3&& comment7" shadow="never" style="border-radius: 4px;">
+										   <i class="el-icon-chat-dot-square"></i>
+										  <span style="width:850px;overflow:hidden;text-overflow:ellipsis;display:block">
+											  {{comment7}}
+										  </span>
+									  </el-card>
+									  <el-card v-if="index==3&& comment8" shadow="never" style="border-radius: 4px;">
+										   <i class="el-icon-chat-dot-square"></i>
+										  <span style="width:850px;overflow:hidden;text-overflow:ellipsis;display:block">
+											  {{comment8}}
+										  </span>
+									  </el-card>
+									  <el-card v-if="index==4&& comment9" shadow="never" style="border-radius: 4px;">
+										   <i class="el-icon-chat-dot-square"></i>
+										  <span style="width:850px;overflow:hidden;text-overflow:ellipsis;display:block">
+											  {{comment9}}
+										  </span>
+									  </el-card>
+									  <el-card v-if="index==4&& comment10" shadow="never" style="border-radius: 4px;">
+										   <i class="el-icon-chat-dot-square"></i>
+										  <span style="width:850px;overflow:hidden;text-overflow:ellipsis;display:block">
+											  {{comment10}}
+										  </span>
+									  </el-card>
+								  </el-card>
+								  <br>
+							  </div>
+
+							  <style>
+								.text {
+								  font-size: 14px;
+								}
+								.item {
+								  margin-bottom: 18px;
+
+								}
+
+								.clearfix:before,
+								.clearfix:after {
+								  display: table;
+								  content: "";
+								}
+								.clearfix:after {
+								  clear: both
+								}
+
+								.box-card {
+								  width: 480px;
+
+								}
+							  </style>
+						  </el-tab-pane>
+						  <el-tab-pane label="分 类 查 看 话 题" name="second">
+						  </br>
+						  </br>
+							<el-badge class="item" value="hot" style="margin-left: 20px;">
+								<!--最后采用数据库已有标签即可,标签已设置超链接，可以实现页面跳转-->
+								<el-button size="middle" style="color:#409EFF;text-decoration: none" @click="toLife">生活</el-button>
+							  </el-badge>
+							  <el-badge class="item" value="hot" style="margin-left: 20px;">
+								<el-button size="middle" style="color:#409EFF;text-decoration: none" @click="toSport">体育</el-button>
+							  </el-badge>
+							  <el-badge value="hot" class="item" style="margin-left: 20px;" >
+								<el-button size="middle" style="color:#409EFF;text-decoration: none" @click="toBook">书籍</el-button>
+							  </el-badge>
+							  <el-badge value="hot" class="item"style="margin-left: 20px;" >
+								<el-button size="middle" style="color:#409EFF;text-decoration: none" @click="toVideo">影视</el-button>
+							  </el-badge>
+							  <style>
+							  .item {
+								margin-top: -3px;
+								margin-right: 40px;
+
+							  }
+							  </style>
+							  </br>
+							</br>
+							  <el-collapse v-model="activeNames" accordion>
+								<el-collapse-item :title="topic.title" v-for="topic in ClassTopics">
+									<template slot="title">
+										<i class="el-icon-chat-dot-round"></i>&nbsp;{{topic.title}}
+									</template>
+									<div >{{topic.intro}}</div>
+									<br>
+								  <div>
+									  <el-button size="mini" @click="go(topic.topicid)" style="margin-left: 880px"  class="el-icon-monitor"> 查看详情</el-button>
+								  </div>
+								</el-collapse-item>
+							  </el-collapse>
+							  <script>
+								export default {
+								  data() {
+									return {
+									  activeName: 'first'
+									};
+								  },
+								  methods: {
+									handleChange(val) {
+									  console.log(val);
+									}
+								  }
+								}
+							  </script>
+						  </el-tab-pane>
+						  <!--上侧有我关注的话题、我发起的话题、我参与的话题三个选择，点击相应的选择，下方会返回相应的内容。-->
+							<input type="hidden" id="userid" th:value="${currentuserid}"/>
+						  <el-tab-pane th:if="${session.loginUser}!=null" label="我 的 话 题" name="third" @click="mytopic">
+
+							  <!--本处只对登录的用户可见-->
+							  <el-tabs type="border-card">
+								<el-tab-pane>
+								  <span slot="label"><i class="el-icon-collection-tag"></i> 我关注的话题</span>
+									<div v-for="topic in MyTopics">
+								  <el-card class="box-card" shadow="hover" style="border-radius: 4px;">
+									<div slot="header" class="clearfix">
+									  <span>{{topic.title}}</span>
+										<el-button round style="float: right;" size="medium" class="el-icon-chat-dot-round" @click="go(topic.topicid)">
+											点击查看话题
+										</el-button>
+									</div>
+									<div>
+										<span>{{topic.intro}}</span>
+									</div>
+								  </el-card>
+										<br>
+									</div>
+								</el-tab-pane>
+								<el-tab-pane>
+									<span slot="label"><i class="el-icon-magic-stick"></i> 我发起的话题</span>
+									<div v-for="topic in MyCreateTopics">
+										<el-card class="box-card " shadow="hover" style="border-radius: 4px;">
+											<div slot="header" class="clearfix">
+												<span>{{topic.title}}</span>
+												<el-button round style="float: right;" size="medium" class="el-icon-chat-dot-round" @click="go(topic.topicid)">
+													点击查看话题
+												</el-button>
+											</div>
+											<div>
+												<span>{{topic.intro}}</span>
+											</div>
+										</el-card>
+										<br>
+									</div>
+								  </el-tab-pane>
+								  <el-tab-pane>
+									<span slot="label"><i class="el-icon-chat-round"></i> 我参与的话题</span>
+									  <div v-for="topic in MyCommentTopics">
+										  <el-card class="box-card" shadow="hover" style="border-radius: 4px;">
+											  <div slot="header" class="clearfix">
+												  <span>{{topic.title}}</span>
+												  <el-button round style="float: right;" size="medium" class="el-icon-chat-dot-round" @click="go(topic.topicid)">
+													  点击查看话题
+												  </el-button>
+											  </div>
+											  <div>
+												  <span>{{topic.intro}}</span>
+											  </div>
+										  </el-card>
+										  <br>
+									  </div>
+								  </el-tab-pane>
+							  </el-tabs>
+						 </el-tab-pane>
+						</el-tabs>
+					  </template>
+					  <script>
+						export default {
+						  data() {
+							return {
+							  activeName: "first"
+							};
+						  },
+						  methods: {
+							handleClick(tab, event) {
+							  console.log(tab, event);
+							}
+						  }
+						};
+					  </script>
+				</el-main>
+				  <el-aside width="300px" style="background-color: white;text-align: left;opacity: 0.95;">
+						<div>
+							<span>
+								<el-input
+										placeholder="搜索话题"
+										v-model="input1"
+										style="width: 300px;height: 10px">
+								<el-button slot="append" icon="el-icon-search" @click="searchtopic"></el-button>
+							</el-input>
+							</span>
+
+							<span th:if="${session.loginUser}!=null">
+								<a class="myButton" @click="toadd">发 布 新 话 题 </a></td>
+							</span>
+							<span th:if="${session.loginUser}==null">
+								<a class="myButton" @click="nologin">发 布 新 话 题 </a></td>
+							</span>
+
+						<!--一个展开栏组，数目任意，栏中是一个个话题名称+话题简介，需要调用数据库内容-->
+							<h4 style="color: tomato; font-size: large;margin-left: 5px;">近 期 新 增 话 题</h4>
+						<el-collapse v-model="activeNames"  @change="handleChange" accordion >
+							<el-collapse-item :title="topic.title"  v-for="topic in newTopics" >
+								<template slot="title">
+									<i class="el-icon-chat-dot-round"></i>&nbsp;{{topic.title}}
+								</template>
+							  {{topic.intro}}
+								<br>
+								<br>
+								<div>
+								<el-button size="mini" @click="go(topic.topicid)" class="el-icon-monitor" style="margin-left: 170px"> 查看详情</el-button>
+								</div>
+							</el-collapse-item>
+						  </el-collapse>
+						  <script>
+							export default {
+							  data() {
+								return {
+								  activeNames: ['1']
+								};
+							  },
+							  methods: {
+								handleChange(val) {
+								  console.log(val);
+								}
+							  }
+							}
+						  </script>
+						</div>
+					
+				  </el-aside>
+				</el-container>
+			  </el-container>
+			
+			
+		</div>
+	 
+</div>
+
+
+<script type="text/javascript">
+    const vm = new Vue({
+		async: false,
+        el:'#app',
+        data: {
+			TactiveName: 'first',
+			input: '',
+			input1:"",
+			hotTopics:[{
+				topicid:''
+			}],
+			newTopics:[],
+			ClassTopics:[],
+			MyTopics:[],
+			MyCommentTopics:[],
+			MyCreateTopics:[],
+			comment1:'',
+			comment2:'',
+			comment3:'',
+			comment4:'',
+			comment5:'',
+			comment6:'',
+			comment7:'',
+			comment8:'',
+			comment9:'',
+			comment10:'',
+
+		},
+		methods:{
+			mytopic(){
+				alert(1);
+			},
+			searchtopic(){
+				var s = this.input1;
+				if (s.length==0){
+					alert("请输入搜索内容");
+				}
+				else {
+					window.location.href='/toCheckTopic/'+s;
+				}
+			},
+			go(id){
+				window.location.href="/topic/"+id;
+			},
+			toadd(){
+				window.location.href="/toAddTopic";
+			},
+			nologin(){
+				window.location.href="/toAddTopic_Nologin";
+			},
+			async toVideo(){
+				const _this=this;
+				await axios.get('/queryTopicListByClass/影视',{}).then(function (resp) {
+							_this.ClassTopics=resp.data;
+						}
+				);
+			},
+			async toSport(){
+				const _this=this;
+				await axios.get('/queryTopicListByClass/体育',{}).then(function (resp) {
+							_this.ClassTopics=resp.data;
+						}
+				);
+			},
+			async toLife(){
+				const _this=this;
+				await axios.get('/queryTopicListByClass/生活',{}).then(function (resp) {
+							_this.ClassTopics=resp.data;
+						}
+				);
+			},
+			async toBook(){
+				const _this=this;
+				await axios.get('/queryTopicListByClass/书籍',{}).then(function (resp) {
+							_this.ClassTopics=resp.data;
+						}
+				);
+				console.log(this.ClassTopics);
+	}
+
+		},
+		async created(){
+			const _this=this;
+			await axios.get('/queryHotTopicList',{}).then(function (resp) {
+						_this.hotTopics=resp.data;
+					}
+			);
+			await axios.get("/queryHotTopicList_to_comment",{}).then(function (resp){
+				_this.Comments=resp.data;
+			});
+			await axios.get('/queryNewTopicList',{}).then(function (resp) {
+						_this.newTopics=resp.data;
+					}
+			);
+			console.log(_this.Comments);
+			this.comment1=this.Comments[0]==null?null:this.Comments[0].content;
+			this.comment2=this.Comments[1]==null?null:this.Comments[1].content;
+			this.comment3=this.Comments[2]==null?null:this.Comments[2].content;
+			this.comment4=this.Comments[3]==null?null:this.Comments[3].content;
+			this.comment5=this.Comments[4]==null?null:this.Comments[4].content;
+			this.comment6=this.Comments[5]==null?null:this.Comments[5].content;
+			this.comment7=this.Comments[6]==null?null:this.Comments[6].content;
+			this.comment8=this.Comments[7]==null?null:this.Comments[7].content;
+			this.comment9=this.Comments[8]==null?null:this.Comments[8].content;
+			this.comment10=this.Comments[9]==null?null:this.Comments[9].content;
+			await axios.get('/queryTopicListByClass/生活',{}).then(function (resp) {
+						_this.ClassTopics=resp.data;
+					}
+			);
+			var userid = document.getElementById("userid").value;
+			if (userid>0){
+				await axios.get('/queryMyAttentionTopicList/'+userid,{}).then(function (resp) {
+							_this.MyTopics=resp.data;
+						}
+				);
+				await axios.get('/queryMyCreateTopicList/'+userid,{}).then(function (resp) {
+							_this.MyCreateTopics=resp.data;
+						}
+				);
+				await axios.get('/queryMyCommentTopicList/'+userid,{}).then(function (resp) {
+							_this.MyCommentTopics=resp.data;
+						}
+				);
+			}
+		}
+       });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>书荫光影-书虫影迷聚集地</title>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<link rel="stylesheet" th:href="@{/css/Info.css}"/>
+</head>
+<body style="width:500px";>
+
+<div id="app">
+	<!--导航栏，跳转到不同的分页面-->
+	<div th:insert="~{commons/common::topbar-login}"></div>
+
+</div>
+
+	<!-- 侧向导航栏 -->
+	<!-- 侧向导航栏 -->
+	<div id="app1">
+
+		<el-container>
+			<div th:insert="~{commons/common::sidebar}"></div>
+				<!--主栏目里面的空表，点击头像可以换头像-->
+				<div id="show">
+					<div id="forms" style="min-height: 600px;width: 800px" >
+						<h1 style="font-family: 华文楷体;color: #7d5d3b;font-size:xx-large;">关于『书荫光影』</h1>
+							<p style="font-family: 华文楷体;color: #7d5d3b;font-size:x-large;line-height: 1.7">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								书荫光影聚集了来自世界各地的书虫影迷，在这里讲述着他们最真实的感受。
+								每个人都有自己的口味，萝卜青菜，各有所爱，书影亦是如此。
+								但是我们懂得投其所好，力图帮助每一个用户找到喜欢的书影，找到感兴趣的话题，找到志同道合的小圈子。
+								在这里，每一个奇思妙想都会得到尊重，每一个用户都在分享，也都在别人的分享里收获。
+							</p>
+						<p style="font-family: 华文楷体;color: #7d5d3b;font-size:x-large;line-height: 1.7">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								烈日炎炎，愿你也能加入其中，找到自己的一块小天地纳荫乘凉，在书与影的纵横交错中，发现照耀自己的那道光。</p>
+						<p style="font-family: 华文楷体;color: #7d5d3b;font-size:x-large;line-height: 1.7;float: right">
+							书荫光影项目小组&nbsp;&nbsp;
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2020年6月
+						</p>
+					</div>
+				</div>
+		</el-container>
+
+	</div>
+
+
+</div>
+
+</body>
+
+<script type="text/javascript">
+	const vm = new Vue({ //记得声明，不然看不到element的input组件
+		el: '#app',
+		data: {
+			input:'',
+		},
+		methods: {//这里用于定义方法
+		},
+		computed: {//计算属性
+		}
+	})
+</script>
+<script>
+	new Vue({
+		el: '#app1' ,
+		data: function() {
+			return { visible: false }
+		}
+	})
+</script>
+<script>
+	new Vue({
+		el: '#app2' ,
+		data: function() {
+			return { visible: false }
+		}
+	})
+</script>
+</html>

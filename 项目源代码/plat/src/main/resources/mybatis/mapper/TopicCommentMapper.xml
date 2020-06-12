@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.TopicCommentMapper">
+    <select id="queryTopicCommentById" resultType="TopicComment" parameterType="int">
+        select * from topiccomment where commentid=#{commentid}
+    </select>
+
+    <select id="queryTopicCommentByTopic" resultType="TopicComment" parameterType="int">
+        select * from topiccomment where topicid=#{topicid} order by addtime desc
+    </select>
+
+    <select id="queryTopicCommentByUser" resultType="TopicComment" parameterType="int">
+        select * from topiccomment where userid = #{userid} order by addtime desc
+    </select>
+
+
+    <insert id="addTopicComment" parameterType="TopicComment">
+        insert into topiccomment(commentid,topicid,userid,content,addtime,likenum,imgpath1,imgpath2,imgpath3,imgpath4) values (#{commentid},#{topicid},#{userid},#{content},#{addtime},#{likenum},#{imgpath1},#{imgpath2},#{imgpath3},#{imgpath4})
+    </insert>
+
+    <update id="updateTopicComment" parameterType="TopicComment">
+        update topiccomment set topicid=#{topicid},userid=#{userid},content=#{content},addtime=#{addtime},likenum=#{likenum},imgpath1=#{imgpath1},imgpath2=#{imgpath2},imgpath3=#{imgpath3},imgpath4=#{imgpath4} where commentid=#{commentid}
+    </update>
+
+    <delete id="deleteTopicComment" parameterType="int">
+        delete from topiccomment where commentid=#{commentid}
+    </delete>
+
+    <select id="cnt" resultType="int">
+        select count(*) from topiccomment
+    </select>
+
+    <select id="max" resultType="int">
+        select ifnull(max(commentid),0) from topiccomment
+    </select>
+
+    <select id="cntByTopic" resultType="int" parameterType="int">
+        select count(*) from topiccomment where topicid=#{topicid}
+    </select>
+</mapper>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+	<meta name="referrer" content="no-referrer"/>
+    <title>书荫光影-书虫影迷聚集地</title>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+<style type="text/css" >
+	.el-header, .el-footer {
+	    background-color: #B3C0D1;
+	    color: #333;
+	    text-align: center;
+	    line-height: 60px;
+	  }
+	  .el-main {
+			display: block;
+	    background-color: #E9EEF3;
+	    color: #333;
+			min-height: 700px;	
+	  }
+</style>
+
+</head>
+<body style="margin: 0;">
+<div id="app">
+	<div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+	<div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+		<div id = "box">
+			<el-container direction="vertical">
+				<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+					<h1 style="color:yellowgreen;font-size:35px;margin-left: 5px; margin-top: 3px;">影 视 V i d e o
+						<span style="margin-left: 560px;">
+							<el-input
+									placeholder="搜索影视"
+									v-model="input1"
+									style="width: 300px;height: 10px">
+							<el-button slot="append" icon="el-icon-search" @click="searchvideo"></el-button>
+						</el-input>
+						</span>
+					</h1>
+				</el-header>
+                <el-main style="background-color: white;text-align: left;margin-top: 2px; opacity: 0.95;">
+                    <div id="forms">
+						<div id="hot" style="width: 1000px;">
+							<p style="margin-left: 0px;font-size: 150%;">
+								热门影视
+							</p>
+					   <el-table :data="hotVideos"
+								 style="width: 100%; opacity:0.85;margin-left: 100px;"
+								max-height="340px">
+									<el-table-column  label="海报" width="150px">
+										<template slot-scope="scope">
+											<el-image
+													style="width: 80px; height: 120px"
+													:src="scope.row.videoimgpath"
+													:preview-src-list="srcList">
+											</el-image>
+										</template>
+									</el-table-column>
+
+						   <el-table-column prop="videoid" width="150px" v-if="show">
+
+						   </el-table-column>
+
+							 <el-table-column prop="videoname" label="剧名" width="200px">
+								   </el-table-column>
+								   <el-table-column prop="director" label="导演" width="200px">
+								   </el-table-column>
+								   <el-table-column prop="totalscore" label="得分" width="150px">
+								   </el-table-column>
+									   <el-table-column  width="150px">
+										   <template slot-scope="scope" prop="videoid">
+											<el-button
+											   size="mini" @click="go(scope.row)" class="el-icon-video-camera"> 查看</el-button>
+										   </template>
+									   </el-table-column>
+					   　　</el-table>
+				   </div>
+					  <div id="recommended" style="width: 1000px;">
+							<p style="margin-left: 0px;font-size: 150%;">为你推荐</p>
+						 <el-table :data="recommendedVideos"
+								   style="width: 100%; opacity:0.85;margin-left: 100px;"
+								  max-height="340px">
+										<el-table-column  label="海报" width="150px">
+											<template slot-scope="scope">
+												<el-image
+														style="width: 80px; height: 120px"
+														:src="scope.row.videoimgpath"
+														:preview-src-list="srcList">
+												</el-image>
+											</template>
+											</el-table-column>
+							 <el-table-column prop="videoid" width="150px" v-if="show">
+
+							 </el-table-column>
+							   <el-table-column prop="videoname" label="剧名" width="200px">
+									 </el-table-column>
+									 <el-table-column prop="director" label="导演" width="200px">
+									 </el-table-column>
+									 <el-table-column prop="totalscore" label="得分" width="150px">
+									 </el-table-column>
+										   <el-table-column  width="150px" prop="videoid">
+											   <template slot-scope="scope">
+												   <el-button
+														   size="mini" @click="go(scope.row)" class="el-icon-video-camera"> 查看</el-button>
+											   </template>
+										   </el-table-column>
+						 　　</el-table>
+					   </div>
+                    
+                    </div>
+                </el-main>
+			</el-container>
+			
+			
+		</div>
+				
+			
+      
+    
+</div>
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+        	show: false,
+					  input:'',
+			input1:"",
+            hotVideos: [],
+			recommendedVideos: []
+        },
+		methods:{
+			go(row) {
+				window.location.href="/video/"+row.videoid;
+			},
+			searchvideo(){
+				var s = this.input1;
+				if (s.length==0){
+					alert("请输入搜索内容");
+				}
+				else {
+					window.location.href='/checkVideo/'+s;
+				}
+			}
+		},
+		created(){
+			const _this=this;
+			axios.get('/queryHotVideoList',{}).then(function (resp) {
+						_this.hotVideos=resp.data;
+					}
+			);
+			axios.get('/queryRecommendVideoList',{}).then(function (resp) {
+						_this.recommendedVideos=resp.data;
+					}
+			);
+		}
+       });
+</script>
+</body>
+</html>

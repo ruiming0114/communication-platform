@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+   <script src="https://unpkg.com/vue/dist/vue.js"></script>
+       <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+       <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+       <style type="text/css" >
+       .el-header, .el-footer {
+         background-color: #B3C0D1;
+         color: #333;
+         text-align: center;
+         line-height: 60px;
+         }
+         .el-main {
+           display: block;
+         background-color: #E9EEF3;
+         color: #333;
+           min-height: 700px;	
+         }
+     
+     </style>
+
+</head>
+<body style="margin: 0;">
+<div id="app">
+    <div th:insert="~{commons/common::topbar-login}"></div>
+    <input type="hidden" th:value="${currentgroupid}" id="groupid">
+
+    <input type="hidden" th:value="${userid}" id="userid">
+        <div id = "box">
+          <el-container direction="vertical">
+            <el-header style="background-color: white;text-align: left;opacity: 0.95;">
+              <h1 style="color: violet;font-size:35px;margin-left: 5px; margin-top: 3px;">小 组 G r o u p</h1>
+            </el-header>
+                    <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                        <div id="forms">
+                          <div id="content">
+			
+                            <el-form :model="Post" :rules="rules" ref="Post" label-width="100px" class="demo-ruleForm">
+                              <el-form-item  style="width: 500px;">
+                                
+                              <span style="font-size: 150%; margin-left: 0px;">发帖</span>
+                              </el-form-item>
+                              <el-form-item label="标题" prop="Title" style="width: 500px; margin-left: 100px;">
+                                <el-input v-model="Post.Title" @submit.native.prevent></el-input>
+                              </el-form-item>
+                              <el-form-item label="内容" prop="Content" style="width: 800px; margin-left: 100px;" >
+                                <el-input type="textarea" v-model="Post.Content" rows="20" @submit.native.prevent></el-input>
+                              </el-form-item>
+                              <el-form-item>
+                                  <el-button type="mini" @click="resetForm('Post')" class="myButton" style="color: white;margin-left: 200px;">重 置</el-button>
+                                <el-button type="mini" @click="submitForm('Post')" class="myButton" style="color: white; margin-left: 50px;">发 布</el-button>
+                              </el-form-item>
+                            </el-form>
+                          </div>
+                        
+                        </div>
+                    </el-main>
+          </el-container>
+          
+          
+        </div>
+
+</div>
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+            input:'',
+            search_word: "",
+						<!-- 从Group,GroupPost表中提取数据 -->
+            Post:{
+							Title:"",
+							Content:"",
+							DateTime:""
+						},
+						rules:{
+							Title:[
+								{ required: true, message: '请输入标题', trigger: 'blur' }
+								],
+						  Content:[
+								{ required: true, message: '请填写发帖内容', trigger: 'blur' },
+                              { min: 25,message: '内容少于25字', trigger: 'blur' }
+								]
+						}
+        },
+        methods:{
+            submitForm(formName) {
+                    this.$refs[formName].validate((valid) => {
+                      if (valid) {
+                        alert('提交成功!');
+                        const title=this.Post.Title;
+                        const content=this.Post.Content;
+                        const groupid=document.getElementById("groupid").value;
+                        const userid=document.getElementById("userid").value;
+                        window.location.href="/AddGroupPost?groupid="+groupid+"&title="+title+"&content="+content+"&userid="+userid;
+                      } else {
+                        console.log('提交失败!');
+                        return false;
+                      }
+                    });
+                  },
+                  resetForm(formName) {
+                    this.$refs[formName].resetFields();
+                  }
+                
+
+        },
+    });
+</script>
+</body>
+</html>

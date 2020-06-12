@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>书荫光影-书虫影迷聚集地</title>
+	<link rel="stylesheet" th:href="@{/css/login.css}"/>
+	<link rel="stylesheet" th:href="@{/css/fonts/fontawesome-webfont.ttf}"/>
+	<link rel="stylesheet" th:href="@{/css/font-awesome.css}"/>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+<body style="width:500px";>
+
+<!--导航栏，跳转到不同的分页面-->
+<div id="app">
+	<!--导航栏，跳转到不同的分页面-->
+	<div th:insert="~{commons/common::topbar-nologin}"></div>
+
+</div><div>
+<!--登录框-->
+<div id = "login-box">
+	<h1>登 录</h1>
+	<!--用户名密码输入框-->
+	<div class = "form">
+		<form th:action="@{/login}" method="post">
+			<p th:text="${AlterPwdMsg1}" style="color: lawngreen"></p>
+			<p th:text="${loginMsg}" style="color: red"></p>
+			<p th:text="${msg}" style="color: red"></p>
+			<div class = "item"> <i class="fa fa-user"></i>
+				<input type = "text" placeholder="用户名" name="username" >
+			</div>
+			<div class = "item" > <i class="fa fa-key"></i>
+				<input type = "password" placeholder="密码" name="password">
+			</div>
+			<br>
+			<tr> <a th:href="@{/toForgetPassword}" class="key">忘记密码？找回密码</a> </tr>
+			<td><!--注册按钮，点击后调转至Register1-->
+				<a th:href="@{/toRegister}" class="myButton">注 册</a>
+				<!--登录按钮，验证成功后调转至PersonalHome 或 Administer_Members 页面-->
+				<a onclick="document.forms[0].submit()" class="myButton">登 录</a>
+			</td>
+		</form>
+	</div>
+</div>
+	</div>
+</body>
+<script>
+  new Vue({
+    el: '#app' ,
+    data: {
+		input:'',
+    	function() {
+			return { visible: false }
+		}
+	}
+  })
+</script>
+</html>

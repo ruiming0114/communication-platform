@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.VideoReviewReportMapper">
+    <select id="queryVideoReviewReportById" resultType="VideoReviewReport" parameterType="int">
+        select * from mybatis.videoreviewreport where vreportid = #{vreportid}
+    </select>
+
+    <select id="queryVideoReviewReportList" resultType="VideoReviewReport">
+        select * from videoreviewreport
+    </select>
+
+    <select id="queryUndealVideoReviewReportList" resultType="VideoReviewReport">
+        select * from videoreviewreport where deal=0
+    </select>
+
+    <select id="queryVideoReviewReportListByVideoReview" resultType="VideoReviewReport">
+         select * from mybatis.videoreviewreport where videoreviewid = #{videoreviewid} order by deal asc
+    </select>
+
+
+    <insert id="addVideoReviewReport" parameterType="VideoReviewReport">
+        insert into videoreviewreport (vreportid,videoreviewid,userid,title,content,addtime,deal) values (#{vreportid},#{videoreviewid},#{userid},#{title},#{content},#{addtime},#{deal})
+    </insert>
+
+    <update id="updateVideoReviewReport" parameterType="VideoReviewReport">
+        update videoreviewreport set videoreviewid=#{videoreviewid},userid=#{userid},title=#{title},content=#{content},addtime=#{addtime},deal=#{deal} where vreportid=#{vreportid}
+    </update>
+
+    <delete id="deleteVideoReviewReport" parameterType="int">
+        delete from videoreviewreport where vreportid=#{vreportid}
+    </delete>
+
+    <select id="cnt" resultType="int">
+        select count (*) from videoreviewreport
+    </select>
+
+    <select id="max" resultType="int">
+        select ifnull(max(vreportid),0) from videoreviewreport
+    </select>
+
+</mapper>

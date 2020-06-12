@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.GroupMemberMapper">
+    <select id="queryGroupMemberListByGroup" resultType="GroupMember" parameterType="int">
+        select * from groupmember where groupid=#{groupid}
+    </select>
+
+    <select id="queryGroupListByUser" resultType="Group" parameterType="int">
+        select mybatis.group.* from mybatis.group,groupmember where mybatis.group.groupid=groupmember.groupid and groupmember.userid=#{userid} order by mybatis.group.groupid desc
+    </select>
+
+    <select id="queryGroupMember" parameterType="int" resultType="GroupMember">
+        select * from groupmember where groupid=#{groupid} and userid = #{userid}
+    </select>
+
+    <select id="getAuthority" resultType="int" parameterType="int">
+        select ifnull((select authority from groupmember where groupid=#{groupid} and userid=#{userid}),-1);
+    </select>
+
+    <insert id="addGroupMember" parameterType="GroupMember">
+        insert into groupmember(groupid,userid,authority) values(#{groupid},#{userid},#{authority})
+    </insert>
+
+    <update id="updateGroupMember" parameterType="GroupMember">
+        update groupmember set authority=#{authority} where groupid=#{groupid} and userid=#{userid}
+    </update>
+
+    <delete id="deleteGroupMember" parameterType="int">
+        delete from groupmember where groupid=#{groupid} and userid=#{userid}
+    </delete>
+
+    <select id="cntMember" resultType="int" parameterType="int">
+        select count(*) from groupmember where groupid=#{groupid}
+    </select>
+</mapper>

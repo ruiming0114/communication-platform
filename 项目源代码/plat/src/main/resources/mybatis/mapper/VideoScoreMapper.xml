@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.VideoScoreMapper">
+    <select id="getScoreByUserAndVideo" parameterType="int" resultType="VideoScore">
+        select * from videoscore where userid=#{userid} and videoid=#{videoid}
+    </select>
+
+    <select id="queryVideoScoreByVideo" parameterType="int" resultType="VideoScore">
+        select * from videoscore where videoid=#{videoid}
+    </select>
+
+    <insert id="addVideoScore" parameterType="VideoScore">
+        insert into videoscore (videoid,userid,score) values (#{videoid},#{userid},#{score})
+    </insert>
+
+    <update id="updateVideoScore" parameterType="VideoScore">
+        update videoscore set score=#{score} where videoid=#{videoid} and userid=#{userid}
+    </update>
+
+    <delete id="deleteVideoScore" parameterType="int">
+        delete from videoscore where videoid=#{videoid} and userid=#{userid}
+    </delete>
+
+    <select id="cntByVideo" parameterType="int" resultType="int">
+        select count(*) from videoscore where videoid=#{videoid}
+    </select>
+</mapper>

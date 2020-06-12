@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<title>书荫光影-书虫影迷聚集地</title>
+	<link rel="stylesheet" th:href="@{/css/Register1.css}"/>
+	<link rel="stylesheet" th:href="@{/css/fonts/fontawesome-webfont.ttf}"/>
+	<link rel="stylesheet" th:href="@{/css/font-awesome.css}"/>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+	<script type="text/javascript">
+		var state;
+		function check() {
+			var username = document.getElementById("username").value;
+			var pw1 = document.getElementById("password").value;
+			var pw2 = document.getElementById("pwd2").value;
+			if (username == "") {
+				alert("用户名不能为空，请返回上一步并重新输入！");
+				return false;
+			}
+			if (username.length < 2 || username.length > 12) {
+				alert("用户名为2至12个字符，请返回上一步并重新输入！");
+				return false;
+			}
+			if (pw1 == "") {
+				alert("密码不能为空，请返回上一步重新输入！");
+				return false;
+			}
+			if (pw1.length < 6 || pw1.length > 12) {
+				alert("密码为6至12个字符，请返回上一步重新输入！");
+				return false;
+			}
+			if (pw1 !== pw2) {
+				alert("两次密码输入不一致，请返回上一步检查并重新输入");
+				return false;
+			}
+			var xhr=new XMLHttpRequest();
+			xhr.onreadystatechange=callback;
+			xhr.open("get","/checkUser?username="+username,false);
+			xhr.send(null);
+			function callback() {
+				if (xhr.readyState==4&&xhr.status==200){
+					var res=xhr.responseText;
+					if(res=="true"){
+						alert("注册成功");
+						state="ok";
+					}
+					else{
+						alert("用户名已存在，请重新输入");
+						state="no";
+					}
+				}
+			}
+			return state == "ok";
+		}
+	</script>
+</head>
+
+<body style="width:500px;">
+
+<!--导航栏，跳转到不同的分页面-->
+<div id="app">
+	<!--导航栏，跳转到不同的分页面-->
+		  <div th:insert="~{commons/common::topbar-nologin}"></div>
+	  
+	</div>
+	<div>
+		<form id = "login-box" th:action="@{/register}" method="post" onsubmit="return check()">
+			<!--注册框-->
+			<h1 style="color: white">注 册</h1>
+			<!-- 三个注册填写目录 -->
+			<div class="Menu">
+				<ul id="progressbar">
+					<li class="active">填写账号密码</li>
+					<li>完善个人信息</li>
+					<li>安全问题验证</li>
+				</ul>
+			</div>
+			<div class="form">
+			<!--第一个注册表单：填写-邮箱账号、手机号、密码、再次输入密码-->
+			<!--带*号的为必填选项，需要加以判断-->
+			<fieldset>
+				<label for="username" style="color:black;"><br>输入昵称: <i class="required">*</i></label>
+				<input type="text" name="username" id="username" placeholder="昵称将作为登录账号使用" />
+
+				<label for="password" style="color:black;"><br>输入密码: <i class="required">*</i></label>
+				<input type="password" name="password" id="password" placeholder="6-12位，包含数字和字母" />
+
+				<label for="pwd2" style="color:black;"><br>确认密码: <i class="required">*</i></label>
+				<input type="password" name="pwd2" id="pwd2" placeholder="6-12位，包含数字和字母" />
+				<div>
+					<tr> <a th:href="@{/toLogin}" class="key">已有账号？去登录</a> </tr>
+				</div>
+				<input type="button" id="buttonmy" class="next action-button" style ="
+					 box-shadow: 0px 10px 14px -7px #a6827e;
+    background: linear-gradient(to bottom, #7d5d3b 5%, #634b30 100%);
+    background-color: #7d5d3b;
+    border: 0 none;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+	font-size: 20px;
+    font-weight: bold;
+	padding: 13px 17px;
+
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #4d3534;
+    margin-top: 50px;
+    margin-right: 46px;
+	margin-left: 43px;
+					" value="下 一 步" />
+
+
+			</fieldset>
+			<!--第二个注册表单:填写-性别、昵称、上传用户头像、，填写生日-->
+			<fieldset>
+
+				<label style="color:black;"><br><br>选择性别:</label>
+				<label for="male" style="color:black; width=40px; height: 20px;margin-left:34px;
+		font-size: 18px; padding: 30px 30px;">
+					<input name="sex" id="male" style="width: 20px;height: 20px; vertical-align: middle;" type="radio" checked="checked" value="0"/>男
+				</label>
+				<label for="female" style="color:black;width=40px; margin-left:50px;height: 20px;
+		font-size: 18px; padding: 20px 30px;">
+					<input name="sex" id="female" style="width: 20px;height: 20px; vertical-align: middle;" type="radio" value="1"/>女
+				</label>
+
+				<label for="birthday" style="color:black;"><br><br>输入生日: </label>
+				<input type = "date" name="birthday" id="birthday" placeholder="2020-06-01" value="2020-1-1">
+
+				<label style="color:black; margin-right:320px;"><br><br>上传头像:  </label>
+				<div class="aui-info">
+					<img th:src="@{background/upload.jpg}"  id="img-txz" style="width: 50px; height: 50px;" class="aui-img-round user-img"/>
+					<input type="file" accept="image/*" width="50" height="50" id="file-txz" name="file" onchange="upload('#file-txz', '#img-txz');"  class="fileInput" value="" />
+				</div>
+				<script type="text/javascript">
+					var upload = function (c, d) {
+						"use strict";
+						var $c = document.querySelector(c),
+								$d = document.querySelector(d),
+								file = $c.files[0],
+								reader = new FileReader();
+						reader.readAsDataURL(file);
+						reader.onload = function (e) {
+							$d.setAttribute("src", e.target.result);
+						};
+
+					};
+				</script>
+
+				<label for="signature" style="color:black;"><br><br>个性签名: </label>
+				<input type="text" name="signature" id="signature" />
+				<br>
+
+				<input type="button" class="previous action-button" style ="
+					 box-shadow: 0px 10px 14px -7px #a6827e;
+    background: linear-gradient(to bottom, #7d5d3b 5%, #634b30 100%);
+    background-color: #7d5d3b;
+    border: 0 none;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+	font-size: 20px;
+    font-weight: bold;
+	padding: 13px 17px;
+
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #4d3534;
+    margin-top: 50px;
+    margin-right: 46px;
+	margin-left: 43px;
+
+					" value="上 一 步" />
+				<input type="button" class="next action-button" style ="
+					 box-shadow: 0px 10px 14px -7px #a6827e;
+    background: linear-gradient(to bottom, #7d5d3b 5%, #634b30 100%);
+    background-color: #7d5d3b;
+    border: 0 none;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+	font-size: 20px;
+    font-weight: bold;
+	padding: 13px 17px;
+
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #4d3534;
+    margin-top: 50px;
+    margin-right: 46px;
+	margin-left: 43px;
+
+					"  value="下 一 步" />
+
+			</fieldset>
+			<!--第三个注册表单：选择安全提示问题--->
+			<fieldset>
+				<label for="email" style="color:black;"><br>输入安全邮箱: <i class="required">*</i></label>
+				<input type="email" name="email" id="email" placeholder="example@mail.com" required="required"/>
+
+				<label for="securityQ" style="color:black;"><br>输入安全提示: <i class="required">*</i></label>
+				<input type="text" name="securityQ" id="securityQ" placeholder="安全提示" required="required"/>
+
+				<label for="securityA" style="color:black;"><br>输入问题答案: <i class="required">*</i></label>
+				<input type="text" name="securityA" id="securityA" placeholder="问题答案" required="required" />
+				<br>
+
+				<input type="button" class="previous action-button" style ="
+					 box-shadow: 0px 10px 14px -7px #a6827e;
+    background: linear-gradient(to bottom, #7d5d3b 5%, #634b30 100%);
+    background-color: #7d5d3b;
+    border: 0 none;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+	font-size: 20px;
+    font-weight: bold;
+	padding: 13px 17px;
+
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #4d3534;
+    margin-top: 50px;
+    margin-right: 46px;
+	margin-left: 43px;
+
+					" value="上 一 步" />
+				<input type="submit" class="action-button" style ="
+					 box-shadow: 0px 10px 14px -7px #a6827e;
+    background: linear-gradient(to bottom, #7d5d3b 5%, #634b30 100%);
+    background-color: #7d5d3b;
+    border: 0 none;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+	font-size: 20px;
+    font-weight: bold;
+	padding: 13px 17px;
+
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #4d3534;
+    margin-top: 50px;
+    margin-right: 46px;
+	margin-left: 43px;"
+					value="提 交">
+
+			</fieldset>
+
+		</form>
+	</div>
+	</div>
+
+		<script th:src='@{js/jquery.min.js}'></script>
+		<script th:src='@{js/jquery.easing.min.js}'></script>
+		<script th:src="@{js/index.js}"></script>
+</body>
+<script>
+    new Vue({
+      el: '#app' ,
+      data: {
+		  input:'',
+      	function() {
+			  return { visible: false }
+		  }
+	  }
+    })
+  </script>
+</html>

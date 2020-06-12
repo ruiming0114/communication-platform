@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+    <style type="text/css" >
+			
+			/*#member{*/
+			/*	margin-top: 20px;*/
+			/*	width: 500px;*/
+			/*	display: block;*/
+			/*	float: left;!* */
+			/*	border: red 1px solid; *!*/
+			/*}*/
+			#rm{
+				margin-left: 50px;
+				display: block;
+				float: right;/* 
+				border: #000000 1px solid; */
+			}
+			#down{
+				display: block;
+				float: left;
+				margin-left: 100px;/* 
+				border: #000000 1px solid; */
+			}
+</style>
+
+</head>
+<body style="margin: 0;">
+<div id="app">
+	<div th:insert="~{commons/common::topbar-login}"></div>
+
+	<div id = "box">
+		<el-container direction="vertical">
+			<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+				<h1 style="color: violet;font-size:35px;margin-left: 5px; margin-top: 3px;">小 组 G r o u p</h1>
+			</el-header>
+			<input type="hidden" id="groupid" th:value="${groupid}">
+			<el-main style="background-color: white;text-align: left;opacity: 0.95;min-height: 650px">
+				<div id="forms">
+					<div id="content">
+						<div id="up">
+						<div id="apply">
+							<span style="font-size: 130%;margin-left: 100px; ">管理员申请</span>
+							<br><br>
+							<el-table :data="GroupAdminApply"
+									  style="margin-left: 100px;width: 1000px"
+									  max-height="320px">
+								<el-table-column prop="applyid" v-if="show">
+								</el-table-column>
+								<el-table-column prop="username" label="用户名" width="200px">
+								</el-table-column>
+								<el-table-column prop="application" label="申请理由" width="550px">
+								</el-table-column >
+								<el-table-column width="100px">
+									<template slot-scope="scope">
+										<el-button
+												size="mini" class="el-icon-check" @click="agree(scope.row.applyid)"> 同意</el-button>
+									</template>
+								</el-table-column>
+								<el-table-column width="100px">
+									<template slot-scope="scope">
+										<el-button
+												size="mini" class="el-icon-close" @click="disagree(scope.row.applyid)"> 拒绝</el-button>
+									</template>
+								</el-table-column>
+								　　</el-table>
+						</div>
+							<br><br><div id="admin">
+								<span style="font-size: 130%; margin-left: 100px;">管理员任免</span>
+
+								<br><br>
+								<el-table :data="GroupAdmin"
+										  style="width: 600px;  margin-left: 100px;"
+										  max-height="320px">
+									<el-table-column prop="userid" v-if="show">
+									</el-table-column>
+									<el-table-column prop="username" label="管理员" width="200px">
+									</el-table-column>
+									<el-table-column width="200px">
+										<template slot-scope="scope">
+											<el-button
+													size="mini" icon="el-icon-delete" @click="deleteAdmin(scope.row.userid)"> 撤销</el-button>
+										</template>
+									</el-table-column>
+									　　</el-table>
+							</div>
+
+							<br><br>
+					<div id="member">
+								<span style="font-size: 130%;margin-left: 100px;">小组成员管理</span>
+
+						<br><br>
+						<el-table :data="GroupMember"
+							 style="width: 600px; margin-left: 100px;"
+								 max-height="650px">
+							<el-table-column prop="userid" v-if="show">
+							</el-table-column>
+							  <el-table-column prop="username" label="组员" width="200px">
+									</el-table-column>
+												 <el-table-column width="200px">
+													  <template slot-scope="scope">
+													   <el-button
+														  size="mini" icon="el-icon-delete" @click="deleteMember(scope.row.userid)"> 删除</el-button>
+													  </template>
+													</el-table-column>
+						　　</el-table>
+					</div>
+							<br><br>
+
+
+								<div id="down">
+								<el-button
+										size="mini" class="myButton" style="color: white;margin-left: 400px" @click="deleteGroup">解 散 小 组</el-button>
+								</div>
+
+					</div>
+				<footer>
+						
+					</footer>
+				
+				</div>
+			</el-main>
+		</el-container>
+		
+		
+	</div>
+    
+</div>
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+        	show:false,
+        	async:false,
+        	input:"",
+            search_word: "",
+						<!-- 从Group,GroupMember,GroupAdminApply表中提取数据 -->
+            GroupMember:[
+							{
+								username:'1'
+							}
+							],
+						GroupAdmin:[
+							{
+								username:'1'
+							}
+						],
+						GroupAdminApply:[
+							{
+							username:"",
+						}
+						],
+				Users:[]
+        },
+        methods:{
+        	disagree(id){
+        		window.location.href="/failGroupAdminApply?applyid="+id;
+			},
+			agree(id){
+				window.location.href="/passGroupAdminApply?applyid="+id;
+			},
+			deleteAdmin(id){
+				var groupid = document.getElementById("groupid").value;
+				var res = confirm("确认撤销吗？");
+				if (res==true){
+					alert("撤销成功");
+					window.location.href="/deleteGroupAdmin?userid="+id+"&groupid="+groupid;
+				}
+			},
+			deleteMember(id){
+				var groupid = document.getElementById("groupid").value;
+				var res = confirm("确认删除吗？");
+				if (res==true){
+					alert("删除成功");
+					window.location.href="/deleteGroupMember?userid="+id+"&groupid="+groupid;
+				}
+			},
+			deleteGroup(id){
+				var groupid = document.getElementById("groupid").value;
+				var res = confirm("确认解散吗？将删除与此小组相关的所有数据，且该操作不可恢复");
+				if (res==true){
+					alert("解散成功");
+					window.location.href="/deleteGroup?groupid="+groupid;
+				}
+			}
+        },
+		async created() {
+			const _this = this;
+			var groupid = document.getElementById("groupid").value;
+			await axios.get('/queryGroupAdminApplyList_Userid_to_Username/' + groupid).then(function (resp) {
+						_this.Users = resp.data;
+					}
+			);
+			await axios.get('/queryGroupAdminApplyList/' + groupid).then(function (resp) {
+						_this.GroupAdminApply = resp.data;
+						for (var i = 0; i < _this.GroupAdminApply.length; i++) {
+							_this.GroupAdminApply[i].username = _this.Users[i].username;
+						}
+					}
+			);
+			await axios.get('/queryGroupAdmin/' + groupid).then(function (resp) {
+						_this.GroupAdmin = resp.data;
+					}
+			);
+			await axios.get('/queryGroupMember/' + groupid).then(function (resp) {
+						_this.GroupMember = resp.data;
+					}
+			);
+		}
+
+    });
+</script>
+</body>
+</html>

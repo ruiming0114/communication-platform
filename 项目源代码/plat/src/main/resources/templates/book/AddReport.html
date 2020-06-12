@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		<meta name="referrer" content="no-referrer"/>
+		<title>书荫光影-书虫影迷聚集地</title>
+		<script src="https://unpkg.com/vue/dist/vue.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+		<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+		   <style type="text/css" >
+			
+		</style>
+		
+		</head>
+		<body style="margin: 0;">
+		<div id="app">
+			<div th:insert="~{commons/common::topbar-login}"></div>
+
+				<div id = "box">
+					<el-container direction="vertical">
+						<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+							<h1 style="color: burlywood;font-size:35px;margin-left: 5px; margin-top: 3px;">举 报 详 情 单</h1>
+						</el-header>
+						<el-main style="background-color: white;text-align: left;opacity: 0.95;">
+							<div id="forms">
+								<div id="content" >
+									<input type="hidden" id="bookreviewid" th:value="${bookreviewid}">
+									<input type="hidden" id="userid" th:value="${userid}">
+									<el-form :model="Report" :rules="rules" ref="Report" label-width="100px" class="demo-ruleForm">
+										<el-form-item  style="width: 800px; margin-left: 100px;">
+											
+										<span style="font-size: 150%;margin-left: 0px;">举报</span>
+									  <el-form-item label="举报标题" prop="Title" style="margin: 10px;margin-bottom: 15px;" >
+										<el-input v-model="Report.Title" @submit.native.prevent></el-input>
+											</el-form-item>
+									  <el-form-item label="举报原因" prop="content" style="margin: 10px;">
+										<el-input type="textarea" v-model="Report.content" rows="20" @submit.native.prevent></el-input>
+									  </el-form-item>
+									  <el-form-item style="margin-left: 250px;">
+										<el-button type="mini" @click="submitForm('Report')"  class="myButton" style="color: white;">提交</el-button>
+									  </el-form-item>
+									</el-form>
+							</div>
+							
+							</div>
+						</el-main>
+					</el-container>
+					
+					
+				</div>
+		    
+		</div>
+		
+		<script type="text/javascript">
+		    const vm = new Vue({
+		        el:'#app',
+		        data: {
+					input: '',
+		            search_word: "",
+		            Report:{
+									Title:"",
+									content:""
+								},
+								rules:{
+									Title:[
+										{ required: true, message: '请输入举报标题', trigger: 'blur' }
+										],
+								  content:[
+										{ required: true, message: '请填写举报原因', trigger: 'blur' },
+										{ min: 15,message: '内容少于15字', trigger: 'blur' }
+										],
+								}
+		        },
+		        methods:{
+		            submitForm(formName) {
+		                    this.$refs[formName].validate((valid) => {
+		                      if (valid) {
+		                        alert('提交成功!');
+		                        const title = this.Report.Title;
+		                        const content =  this.Report.content;
+		                        const userid = document.getElementById("userid").value;
+		                        const bookreviewid = document.getElementById("bookreviewid").value;
+
+		                        window.location.href='/addBookReviewReport?userid='+userid+'&bookreviewid='+bookreviewid+'&title='+title+'&content='+content;
+
+		                      } else {
+		                        console.log('提交失败!');
+		                        return false;
+		                      }
+		                    });
+		                  },
+		        },
+		    });
+		</script>
+		</body>
+		</html>

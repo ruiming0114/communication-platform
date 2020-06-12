@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+	<meta name="referrer" content="no-referrer"/>
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<style type="text/css" >
+	.el-header, .el-footer {
+	  background-color: #B3C0D1;
+	  color: #333;
+	  text-align: center;
+	  line-height: 60px;
+	  }
+	  .el-main {
+		display: block;
+	  background-color: #E9EEF3;
+	  color: #333;
+		min-height: 700px;	
+	  }
+	
+	</style>
+
+</head>
+<body style="margin: 0;">
+<div id="app">
+
+	<div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+	<div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+				<div id = "box">
+					<el-container direction="vertical">
+						<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+							<h1 style="color: teal; font-size:35px;margin-left: 5px; margin-top: 3px;">图 书 B o o k</h1>
+						</el-header>
+						<el-main style="background-color: white;text-align: left;opacity: 0.95;">
+							<div id="forms">
+								<div id="result" v-if="isSearch">
+									<span style="font-size: 150%;margin-left: 0px;">搜索结果</span>
+									<div class="block">
+									<el-table :data="result"
+										 style="width: 900px;margin-left: 150px;"
+											 >
+										<input type="hidden" id="word" th:value="${word}">
+										<el-table-column prop="bookid" width="150px" v-if="show">
+										</el-table-column>
+											 <el-table-column  label="封面图片" width="150px">
+												 <template slot-scope="scope">
+													 <el-image
+															 style="width: 80px; height: 120px"
+															 :src="scope.row.bookimgpath"
+															 :preview-src-list="srcList">
+													 </el-image>
+												 </template>
+												  </el-table-column>
+										  <el-table-column prop="bookname" label="书名" width="150px">
+												</el-table-column>
+												<el-table-column prop="author" label="作者" width="150px">
+												</el-table-column>
+												<el-table-column prop="totalscore" label="得分" width="150px">
+												</el-table-column>
+												<el-table-column  width="150px">
+													<template slot-scope="scope">
+														<el-button size="mini" @click="toBook(scope.row)" class="el-icon-reading"> 查看</el-button>
+													</template>
+												</el-table-column>
+									　　</el-table>
+										<el-pagination
+												style="margin-left: 300px;"
+												@size-change="size"
+												@current-change="page"
+												:current-page="currentPage"
+												:page-size="pageSize"
+												:page-sizes="[4,10,20]"
+												layout="total, sizes, prev, pager, next, jumper"
+												:total="total">
+										</el-pagination>
+									</div>
+								</div>
+								<div v-else style="text-align: center;margin-top: 200px;">
+									<p>查询结果为空，试着搜搜其他吧</p>
+								</div>
+							
+							
+							</div>
+						</el-main>
+					</el-container>
+					
+					
+				</div>
+		
+</div>
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+			input:'',
+			show: false,
+					  isSearch:true,
+			total: [[${total_size}]],
+						pageSize:4,
+						currentPage: 1,
+						result:[
+
+						]
+        },
+        methods: {
+			toBook(row) {
+				window.location.href = "/book/" + row.bookid;
+			},
+			async page(currentPage) {
+				this.currentPage = currentPage;
+				var word = document.getElementById("word").value;
+				const _this = this;
+				axios.get('/checkBookInPage/'+word+'/'+_this.currentPage+'/'+_this.pageSize).then(function (resp) {
+							console.log(resp.data);
+							_this.result = resp.data;
+						}
+				);
+			},
+			async size(pageSize) {
+				this.pageSize = pageSize;
+				var word = document.getElementById("word").value;
+				const _this = this;
+				axios.get('/checkBookInPage/'+word+'/'+_this.currentPage+'/'+_this.pageSize).then(function (resp) {
+							console.log(resp.data);
+							_this.result = resp.data;
+						}
+				);
+			}
+		},
+        created(){
+        	var word = document.getElementById("word").value;
+			const _this = this;
+			axios.get('/checkBookInPage/'+word+'/'+_this.currentPage+'/'+_this.pageSize).then(function (resp) {
+						console.log(resp.data);
+						_this.result = resp.data;
+					}
+			);
+		}
+
+    });
+</script>
+</body>
+</html>

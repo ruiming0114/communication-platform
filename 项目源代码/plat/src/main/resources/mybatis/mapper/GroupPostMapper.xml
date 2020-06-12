@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rm.plat.mapper.GroupPostMapper">
+    <select id="queryGroupPostById" resultType="GroupPost" parameterType="int">
+        select * from grouppost where grouppostid = #{grouppostid}
+    </select>
+
+    <select id="queryGroupPostListByGroup" resultType="GroupPost" parameterType="int">
+        select * from grouppost where groupid = #{groupid} order by top desc ,addtime desc
+    </select>
+
+    <select id="queryGroupPostListByUser" resultType="GroupPost" parameterType="int">
+        select * from grouppost where userid = #{userid}
+    </select>
+
+    <insert id="addGroupPost" parameterType="GroupPost">
+        insert into grouppost(grouppostid,groupid,userid,title,content,addtime,top,essence) values(#{grouppostid},#{groupid},#{userid},#{title},#{content},#{addtime},#{top},#{essence})
+    </insert>
+
+    <update id="updateGroupPost" parameterType="GroupPost">
+        update grouppost set groupid=#{groupid},userid=#{userid},title=#{title},content=#{content},addtime=#{addtime},top=#{top},essence=#{essence} where grouppostid=#{grouppostid}
+    </update>
+
+    <delete id="deleteGroupPost" parameterType="int">
+        delete from grouppost where grouppostid=#{grouppostid}
+    </delete>
+
+    <select id="cnt" resultType="int">
+        select count(*) from grouppost
+    </select>
+
+    <select id="max" resultType="int">
+        select ifnull(max(grouppostid),0) from grouppost
+    </select>
+
+    <select id="queryRecommendPost" resultType="GroupPost">
+        select * from grouppost where essence=1 order by addtime desc limit 8
+    </select>
+
+</mapper>

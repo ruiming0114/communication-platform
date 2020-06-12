@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="referrer" content="no-referrer"/>
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+    <style type="text/css">
+        .el-header, .el-footer {
+            background-color: #B3C0D1;
+            color: #333;
+            text-align: center;
+            line-height: 60px;
+        }
+        .el-main {
+            display: block;
+            background-color: #E9EEF3;
+            color: #333;
+            min-height: 700px;
+        }
+			 li{
+			     list-style: none;
+			 }
+       #video{
+        /*   border: aqua 1px solid; */
+           margin: 10px;
+       }
+       
+       .el-image{
+          /* border: #42b983 1px solid; */
+           max-width: 135px;
+           max-height: 200px;
+           vertical-align:middle;
+           display: inline-block;
+       }
+       
+       .video{
+          /* border: blue 1px solid; */
+           vertical-align:middle;
+           display: inline-block;
+       }
+       #score{
+      /*     border: blueviolet 1px solid; */
+           display: inline-block;
+           position:absolute;
+           left:950px;
+           top:250px;
+       }
+       #intro{
+           margin: 10px;
+       }
+       
+       #videoreviews{
+           margin:10px;
+       }
+    </style>
+</head>
+<body style="margin: 0;">
+<div id="app">
+    <div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+    <div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+        <div id = "box">
+          <el-container direction="vertical">
+            <el-header style="background-color: white;text-align: left;opacity: 0.95;">
+              <h1 style="color:yellowgreen;font-size:35px;margin-left: 5px; margin-top: 3px;">影 视 V i d e o</h1>
+            </el-header>
+                    <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                        <div id="forms">
+                          <div id="content">
+                            <div id="video">
+                                <el-image :lazy='true'
+                                   style="width: 135px; height: 200px"
+                                   th:src="${currentvideo.videoimgpath}">
+                                   <!-- cover和srcList都是图片路径 后者为大图预览 -->
+                                 </el-image>
+
+                                <span th:if="${currentuser}!=null">
+            <input type="hidden" id="userid" th:value="${currentuser.userid}">
+		   </span>
+
+                                 <ul class="video clearfix">
+                                     <li>影视名称：<span th:text="${currentvideo.videoname}"></span></li>
+                                     <br>
+                                     <li>导演：<span th:text="${currentvideo.director}"></span></li>
+                                     <br>
+                                     <li>编剧：<span th:text="${currentvideo.writer}"></span></li>
+                                     <br>
+                                     <li>主演：<span th:text="${currentvideo.actor}"></span></li>
+                                     <br>
+                                     <li>制片国家：<span th:text="${currentvideo.country}"></span></li>
+                                 </ul>
+
+                                 <div id="score">
+                                     得分：<el-rate
+                                           v-model="value"
+                                           disabled
+                                            show-score
+                                           text-color="#ff9900"
+                                           score-template="{value}">
+                                         </el-rate>
+
+                                     <div th:if=" ${session.loginUser}!=null">
+                                     你的评分：{{UserScore}}
+                                     <div id="star">
+                                         <el-rate @change="changeScore"
+                                                  v-model="UserScore"
+                                                  show-score
+                                                  allow-half>
+                                         </el-rate>
+                                          
+                                     </div>
+                                   </div>
+                                 </div>
+                            </div>
+                            
+                             
+                                  <el-divider></el-divider>
+                             <div id="intro">
+                                 简介：<p><p th:text="${currentvideo.videointro}"></p>
+                             </div>
+                              <el-divider></el-divider>
+                              <input type="hidden" id="videoid" th:value="${currentvideo.videoid}"/>
+
+                             <div id="vieoreviews">
+                                 <!-- 点击跳转到影评管理页面 -->
+                                 <el-button size="middle"  @click="back" class="el-icon-back"> 返回</el-button>
+                                 <el-button size="middle"  @click="toAdd" class="el-icon-edit-outline"> 发表影评</el-button>
+
+                                 <span th:if="${currentuser}!=null">
+				                    <span th:if="${currentuser.perms}=='admin'">
+                                        &nbsp;
+								    <el-button size="middle" @click="toManage" class="el-icon-coordinate"> 管理影评</el-button>
+			                    	</span>
+                                 </span>
+
+
+                                 <div class="block">
+                                 <el-table :data="VideoReviews"
+                                      >
+                                     <el-table-column prop="videoreviewid" width="200px" v-if="show">
+
+                                     </el-table-column>
+                                       <el-table-column prop="title" label="影评标题" width="200px">
+                                       </el-table-column>
+                                       <el-table-column prop="username" label="影评发布人" width="200px">
+                                       </el-table-column>
+                                       <el-table-column prop="addtime" label="发布时间" width="200px">
+                                       </el-table-column>
+                                       <el-table-column prop="likenum" label="点赞数" width="150px">
+                                       </el-table-column>
+                                       <el-table-column prop="againstnum" label="反对数" width="150px">
+                                       </el-table-column>
+                                       <el-table-column  width="150px" prop="videoreviewid">
+                                           <template slot-scope="scope">
+                                               <el-button size="mini"  @click="go(scope.row)" class="el-icon-monitor"> 查看</el-button>
+                                           </template>
+                                       </el-table-column>
+                                 　　</el-table>
+                                 <el-pagination
+                                         style="margin-left: 300px;"
+                                         @size-change="size"
+                                         @current-change="page"
+                                         :current-page="currentPage"
+                                         :page-size="pageSize"
+                                         :page-sizes="[4,10,20]"
+                                         layout="total, sizes, prev, pager, next, jumper"
+                                         :total="total">
+                                   </el-pagination>
+                                 </div>
+                                 
+                             </div>
+                         </div>
+                         <footer>
+                           
+                         </footer>
+
+        </div>
+    
+</div>
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+            input:'',
+            async: false,
+            total: [[${total_size}]],
+            value: [[${value}]],
+            UserScore:[[${uservideoscore}]],
+            disable:true,
+            show:false,
+            isshow:true,
+            UserID:'',
+            keyWord: "",
+            currentPage:1,
+            pageSize:4,
+            VideoReviews:[],
+            Users:[
+                {
+                    username:"",
+                }
+            ]
+        },
+        methods:{
+            back(){
+                window.location.href="/videoindex";
+            },
+            changeScore(){
+                var userid=document.getElementById("userid").value;
+                var videoid = document.getElementById("videoid").value;
+                window.location.href="/changeVideoScore/"+userid+'/'+videoid+'/'+this.UserScore;
+            },
+            toAdd(){
+                var videoid = document.getElementById("videoid");
+                window.location.href="/toAddVideoReview/"+videoid.value;
+            },
+            go(row) {
+                window.location.href="/videoreview/"+row.videoreviewid;
+            },
+            toManage(){
+                var videoid = document.getElementById("videoid");
+                window.location.href="/toAdminister_VideoReview/"+videoid.value;
+            },
+            async page(currentPage) {
+                this.currentPage = currentPage;
+                const _this = this;
+                var videoid = document.getElementById("videoid");
+                await axios.get('/queryVideoReviewListByVideo_UserId_to_Username/' + videoid.value + '/' + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+                        _this.Users = resp.data;
+                    }
+                );
+                await axios.get('/queryVideoReviewListByVideo/' + videoid.value + '/' + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+                        _this.VideoReviews = resp.data;
+                        for (var i = 0; i < _this.VideoReviews.length; i++) {
+                            _this.VideoReviews[i].username = _this.Users[i].username;
+                        }
+                    }
+                );
+            },
+            async size(pageSize) {
+                this.pageSize = pageSize;
+                const _this = this;
+                var videoid = document.getElementById("videoid");
+                await axios.get('/queryVideoReviewListByVideo_UserId_to_Username/' + videoid.value + '/' + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+                        _this.Users = resp.data;
+                    }
+                );
+                await axios.get('/queryVideoReviewListByVideo/' + videoid.value + '/' + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+                        _this.VideoReviews = resp.data;
+                        for (var i = 0; i < _this.VideoReviews.length; i++) {
+                            _this.VideoReviews[i].username = _this.Users[i].username;
+                        }
+                    }
+                );
+            }
+        },
+        async created() {
+            const _this = this;
+            var videoid = document.getElementById("videoid");
+            await axios.get('/queryVideoReviewListByVideo_UserId_to_Username/' + videoid.value + '/' + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+                    _this.Users = resp.data;
+                }
+            );
+            await axios.get('/queryVideoReviewListByVideo/' + videoid.value + '/' + _this.currentPage + '/' + _this.pageSize).then(function (resp) {
+                    _this.VideoReviews = resp.data;
+                    for (var i = 0; i < _this.VideoReviews.length; i++) {
+                        _this.VideoReviews[i].username = _this.Users[i].username;
+                    }
+                }
+            );
+        }
+    });
+</script>
+</body>
+</html>

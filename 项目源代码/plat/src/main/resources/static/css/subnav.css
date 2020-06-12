@@ -1,0 +1,54 @@
+body {
+    background-image: url("../background/LoginPage.jpg");
+    background-repeat: no-repeat;
+    background-size:cover;
+    background-attachment: fixed;
+    overflow-x: hidden;
+    margin: 0px;
+}
+
+#show {
+    width: 1000px;
+    height: 700px;
+    margin-left: 0%;/*边框四周距离*/
+    margin-top: 2%;/*上边距*/
+    margin-bottom: 10%;
+    text-align: center;/*内容居中*/
+    background-color: white;
+    opacity: 0.7;
+    padding: 20px 30px;
+
+}
+/*更换头像*/
+.aui-info {
+    position: relative;
+}
+
+ .fileInput{
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            display: block;
+          
+			width: 100px; 
+			height: 100px;
+            clear: both;
+            display: block;
+            margin: auto;
+            background-color: red;
+}
+/*图片位置*/
+#self {
+    margin-left: 830px;
+    float:left; 
+    margin-top: -250px;
+}
+/*表格设计*/
+#forms {
+    margin-left: 30px;
+    float:left; 
+   
+}

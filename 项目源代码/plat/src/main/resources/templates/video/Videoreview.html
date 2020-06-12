@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+	<style type="text/css" >
+    	.text {
+    	    font-size: 14px;
+    	  }
+		#content{
+			margin: 50px 100px 100px 100px;
+		}
+    	  .text-item {
+    	    padding:  0;
+    	  }
+    	
+    	  .box-card {
+    			min-height: 300px;
+    	    width: 800px;
+					padding-bottom: 0;
+					
+    	  }
+    		.button {
+    		    padding: 0;
+    		  }
+    </style>
+    
+    </head>
+    <body style="margin: 0;">
+    <div id="app">
+
+		<div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+		<div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+
+			<div id = "box">
+				<el-container direction="vertical">
+					<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+						<h1 style="color:yellowgreen;font-size:35px;margin-left: 5px; margin-top: 3px;">影 视 V i d e o</h1>
+					</el-header>
+					<el-main style="background-color: white;text-align: left;opacity: 0.95;">
+						<div id="forms">
+							<div id="content" >
+								
+								<div id="post">
+											
+											<el-card class="box-card">
+											  <div class="text-item" >
+												<h3>
+													<span th:text="${currentreview.title}"></span>
+												</h3>
+													<h5 style="color: skyblue;">
+														<span th:text="${reviewuser.username}"></span></h5>
+												  <span th:text="${currentreview.content}"></span>
+												</div>
+												<br>
+												<div id="action" style="float: right;margin-top: 90px;">
+												  <span th:if="${currentuser}!=null">
+                                       <input type="hidden" id="userid" th:value="${currentuser.userid}">
+                                    <span th:if="${like}==null">
+    							<el-button  type="text" v-show="attitude" class="button" @click.native="Liked"><i class="el-icon-caret-top" ></i></el-button>
+                                        </span>
+                                    <span th:if="${like}!=null">
+                                        <input type="hidden" id="status" th:value="${like.status}"/>
+                                        <el-button  type="text" v-show="attitude" class="button" @click.native="noLiked"><i class="el-icon-caret-top" ></i></el-button>
+                                    </span>
+                                </span>
+													点赞：<span th:text="${currentreview.likenum}"></span>
+													<span th:if="${currentuser}!=null">
+                                    <span th:if="${like}==null">
+    							<el-button type="text" v-show="attitude" class="button" @click.native="Against"><i class="el-icon-caret-bottom"></i></el-button>
+                                           </span>
+                                     <span th:if="${like}!=null">
+    							<el-button type="text" v-show="attitude" class="button" @click.native="noAgainst"><i class="el-icon-caret-bottom"></i></el-button>
+                                           </span>
+                                </span>
+													反对：<span th:text="${currentreview.againstnum}"></span>
+												</div>
+
+												<div style="float: left;margin-top: 90px;">
+
+													<el-button size="mini" @click="go" class="el-icon-back"> 返回</el-button>
+													&nbsp;
+													<span th:if="${session.loginUser}!=null">
+                                    <el-button size="mini" @click="toReport" class="el-icon-thumb"> 举报</el-button>
+                                <span th:if="${currentuser.userid}==${currentreview.userid}">
+                                    &nbsp;
+                                <el-button size="mini" @click="gotoEdit" class="el-icon-edit"> 编辑</el-button>
+                                    <el-button size="mini" @click="toDelete"  class="el-icon-delete"> 删除</el-button>
+                                </span></span>
+												</div>
+
+											</el-card>
+								</div>
+
+				
+				
+			</div>
+        
+    </div>
+    
+    <script type="text/javascript">
+        const vm = new Vue({
+            el:'#app',
+            data: {
+            	input:'',
+                search_word: "",
+								attitude:true,
+                VideoReview:{
+    							usrname:"lqy",
+    							Title:"这部剧真好看",
+    							content:"今天风和日丽",
+									date:"",
+									LikeNum:10,
+									AgainstNum:10
+    						},
+            },
+            methods:{
+				noLiked(){
+					const userid=document.getElementById("userid").value;
+					const status=document.getElementById("status").value;
+					if (status==1){
+						res = confirm("您已经点赞过本条影评，本次点击将取消，确认取消吗？");
+						if (res==true){
+							window.location.href='/deleteVideoReviewLiked/'+userid+'/'+[[${currentreview.videoreviewid}]];
+						}
+					}
+					else {
+						window.location.href='/changeVideoReviewLiked/'+userid+'/'+[[${currentreview.videoreviewid}]];
+					}
+				},
+				noAgainst(){
+					const userid=document.getElementById("userid").value;
+					const status=document.getElementById("status").value;
+					if (status==-1){
+						res = confirm("您已经反对过本条影评，本次点击将取消，确认取消吗？");
+						if (res==true){
+							window.location.href='/deleteVideoReviewLiked/'+userid+'/'+[[${currentreview.videoreviewid}]];
+						}
+					}
+					else {
+						window.location.href='/changeVideoReviewLiked/'+userid+'/'+[[${currentreview.videoreviewid}]];
+					}
+				},
+				Liked(){
+					const userid=document.getElementById("userid").value;
+					window.location.href="/addVideoReviewLiked/"+userid+'/'+[[${currentreview.videoreviewid}]];
+				},
+				Against(){
+					const userid=document.getElementById("userid").value;
+					window.location.href="/addVideoReviewAgainst/"+userid+'/'+[[${currentreview.videoreviewid}]];
+				},
+				toDelete(){
+					var res = confirm("确认删除吗？所有与该影评相关的信息都会被删除，且无法恢复");
+					if (res==true){
+						alert("删除成功");
+						window.location.href="/DeleteVideoReview/"+[[${currentreview.videoreviewid}]];
+					}
+				},
+				toReport(){
+					window.location.href="/toAddVideoReviewReport/"+[[${currentreview.videoreviewid}]];
+				},
+				gotoEdit(){
+					window.location.href="/toEditVideoReview/"+[[${currentreview.videoreviewid}]];
+				},
+				go() {
+					window.location.href="/video/"+[[${currentreview.videoid}]];
+				}
+            }
+    
+        });
+    </script>
+    </body>
+    </html>

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+	<meta name="referrer" content="no-referrer"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>书荫光影-书虫影迷聚集地</title>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<link rel="stylesheet" th:href="@{/css/subnav.css}"/>
+</head>
+<body style="width:500px";>
+
+<div id="app">
+<!--导航栏，跳转到不同的分页面-->
+	  <div th:insert="~{commons/common::topbar-login}"></div>
+</div>
+  
+
+<!-- 侧向导航栏 -->
+<div id="app1">
+	<el-container>
+		<div th:insert="~{commons/common::sidebar}"></div>
+
+<!--主栏目里面的空表，点击头像可以换头像-->
+<div id="show" style="height: 1000px;">
+	<p th:text="${authorizeMsg}" style="color: red"></p>
+<div id="forms" >
+	<h2 align="left"><span th:text="${session.loginUser.username}"></span>，欢迎回来！</h2>
+	<h4 align="left" style="margin-left: 50px"><span th:text="${session.loginUser.signature}"></span></h4>
+	<el-divider></el-divider>
+	<h2 align="left">最近评价的图书</h2>
+	<table>
+		<tr>
+			<td th:each="book:${mybooklist}">
+				<a th:href="@{'/book/'+${book.bookid}}" style="color: #7d5d3b; text-decoration: none">
+					<img th:src="${book.bookimgpath}" alt=" "  height="100px" width="70px"  hspace="40" />
+					<h5 th:text="${book.bookname}"></h5>
+				</a>
+			</td>
+		</tr>
+		<!-- 传数据的空表，也可以传图书封面之类的图片
+			<thead>
+			<tr>
+				<td>Name</td>
+				<td >Owned/Wishlist</td>
+				<td >Nationality</td>
+			</tr>
+		</thead>
+		<tbody>
+				<tr >
+					<td >Yohji Yamamoto</td>
+					<td >5/4</td>
+					<td class="py-2 text-right">Japan</td>
+				</tr>
+				<tr >
+				<td class="py-2">Sato Oki</td>
+				<td class="py-2 text-center">1/3</td>
+				<td class="py-2 text-right">Japan</td>
+				</tr>
+				<tr>
+				<td class="py-2">Amaya Arzuaga</td>
+				<td class="py-2 text-center">1/1</td>
+				<td class="py-2 text-right">Spain</td>
+				</tr>
+		</tbody>-->
+	</table>
+	<h2 align="left">最近评价的影视</h2>
+	<table>
+		<tr>
+			<td th:each="video:${myvideolist}">
+				<a th:href="@{'/video/'+${video.videoid}}" style="color: #7d5d3b; text-decoration: none">
+					<img th:src="${video.videoimgpath}" alt=" "  height="100px" width="70px"  hspace="40" />
+					<h5 th:text="${video.videoname}"></h5>
+				</a>
+			</td>
+		</tr>
+
+	</table>
+	<h2 align="left">最近参与的话题</h2>
+	<el-row >
+		<el-col th:each="topic:${mytopiclist}" :span="30">
+			<el-card style="border-radius: 30px;height: 60px;width:250px;text-space: 200px">
+				<a th:href="@{'/topic/'+${topic.topicid}}" style="color: #7d5d3b; text-decoration: none">
+						<b style="font-size: small" th:text="${topic.title}"></b>
+				</a>
+			</el-card>
+		</el-col>
+	</el-row>
+	<h2 align="left">最近参加的小组</h2>
+	<el-row >
+		<el-col th:each="group:${mygrouplist}" :span="30">
+			<el-card style="border-radius: 30px;height: 60px;width:250px;text-space: 200px">
+				<a th:href="@{'/topic/'+${group.groupid}}" style="color: #7d5d3b; text-decoration: none">
+					<b style="font-size: small" th:text="${group.groupname}"></b>
+				</a>
+			</el-card>
+		</el-col>
+	</el-row>
+</div>
+<div id="self">
+<!--	<div class="aui-info">-->
+<!--        <img th:src="@{~/background/upload.jpg}"  id="img-txz" style="width: 100px; height: 100px;" class="aui-img-round user-img"/>-->
+<!--        <input type="file" accept="image/*" width="100" height="100" id="file-txz" name="file" onchange="upload('#file-txz', '#img-txz');"  class="fileInput" value="" />-->
+<!--	</div>-->
+<!--		<script type="text/javascript">-->
+<!--			var upload = function (c, d) {-->
+<!--			"use strict";-->
+<!--			var $c = document.querySelector(c),-->
+<!--            $d = document.querySelector(d),-->
+<!--            file = $c.files[0],-->
+<!--            reader = new FileReader();-->
+<!--			reader.readAsDataURL(file);-->
+<!--			reader.onload = function (e) {-->
+<!--            $d.setAttribute("src", e.target.result);-->
+<!--			};-->
+<!--			-->
+<!--		};-->
+<!--		</script>-->
+	<!--此处需要数据库的数据-->
+<!--	<h2 th:text="${session.loginUser.username}"></h2>-->
+<!--	<h4 th:text="${session.loginUser.signature}"></h4>-->
+		<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</div>
+</div>
+
+
+</div>
+
+  </el-container>
+
+</div>
+
+
+
+
+</div>
+</body>
+
+<script type="text/javascript">
+	const vm = new Vue({ //记得声明，不然看不到element的input组件
+	   el: '#app',
+	   data: {
+		   input:'',
+	   },
+	   methods: {//这里用于定义方法
+	   },
+	   computed: {//计算属性
+	   }
+	 })
+</script>
+<script>
+    new Vue({
+      el: '#app1' ,
+      data: function() {
+        return { visible: false }
+      }
+    })
+  </script>
+<script>
+    new Vue({
+      el: '#app2' ,
+      data: function() {
+        return { visible: false }
+      }
+    })
+  </script>
+</html>

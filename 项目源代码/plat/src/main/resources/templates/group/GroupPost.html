@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+ <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+  <style type="text/css" >
+	.text {
+	    font-size: 14px;
+	  }
+	#content{
+		margin: 50px 100px 50px 150px;
+	}
+	  .text-item {
+	    padding:  0;
+	  }
+	
+	  .box-card {
+			min-height: 800px;
+	    width: 950px;
+	  }
+		.button {
+		    padding: 0;
+		  }
+</style>
+
+</head>
+<body style="margin: 0;">
+<div id="app">
+	<div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+	<div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+		<div id = "box">
+			<el-container direction="vertical">
+				<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+					<h1 style="color: violet;font-size:35px;margin-left: 5px; margin-top: 3px;">小 组 G r o u p</h1>
+				</el-header>
+                <el-main style="background-color: white;text-align: left;opacity: 0.95;">
+                    <div id="forms">
+						<div id="content">
+			
+							<div id="post">
+								<input id="groupid" type="hidden" th:value="${currentPost.groupid}"/>
+								<input id="grouppostid" type="hidden" th:value="${currentPost.grouppostid}"/>
+										<el-card class="box-card">
+
+										  <div class="text-item" >
+											  <h3>
+											  [[${currentPost.title}]]
+										  </h3>
+										   <h5 style="color: skyblue;">[[${postuser}]]</h5>
+										  </div>
+											 <div style="width:850px;word-wrap: break-word; word-break: normal;" th:text="${currentPost.content}"></div>
+
+												<div>
+													<input type="hidden" id="userid" th:value="${currentuserid}">
+													<br>
+													<br>
+														<el-button size="mini" class="el-icon-back" @click="back"> 返回</el-button>
+													&nbsp;
+													<span th:if="${currentuserid}!=-1">
+														<el-button size="mini" @click="show" icon="el-icon-chat-dot-square"> 回帖</el-button>
+													</span>
+													<span th:if="${currentuserid}==-1">
+														<el-button size="mini" icon="el-icon-chat-dot-square" @click="nologin"> 回帖</el-button>
+													</span>
+													&nbsp;
+													<span th:if="${currentuserperms}=='admin' or ${currentuserid}==${currentPost.userid} or ${currentuserauthority}>0">
+														<el-button size="mini" icon="el-icon-delete" @click="toDeletePost"> 删除</el-button>
+													</span>
+													&nbsp;
+													<span th:if="${currentuserauthority}>0 and ${top}==0">
+														<el-button size="mini" icon="el-icon-upload2" @click="top"> 置顶</el-button>
+													</span>
+													<span th:if="${currentuserauthority}>0 and ${top}==1">
+														<el-button size="mini" icon="el-icon-download" @click="notop"> 取消置顶</el-button>
+													</span>
+													&nbsp;
+													<span th:if="${currentuserauthority}>0 and ${essence}==0">
+												<el-button size="mini" icon="el-icon-star-off" @click="good"> 设为精华帖</el-button>
+													</span>
+													<span th:if="${currentuserauthority}>0 and ${essence}==1">
+												<el-button size="mini" icon="el-icon-star-on" @click="nogood"> 取消精华帖</el-button>
+													</span>
+
+
+
+												</div>
+
+
+											<div id="div1" style="display:none;" >
+												<br>
+												<el-input style="width: 810px ;resize:none;" v-model="ReplyAdd" type="textarea" :rows="3"></el-input>
+												<el-button size="mini" icon="el-icon-s-promotion" @click="toAdd"> 发表</el-button>
+												<br>
+
+											</div>
+											<el-divider content-position="left">最近回复</el-divider>
+											<div id="reply" v-for="reply in Reply">
+												  <div class="text-item" >
+												   <h6><span style="width:600px;word-wrap: break-word; word-break: normal;">{{reply.username}}:  {{reply.content}}</span>
+													   <span v-if="currentUserID==reply.userid">
+													   <el-button size="mini" style="float: right" icon="el-icon-delete" @click="toDeleteReply(reply.grouppostreplyid)"> 删除</el-button>
+													   </span>
+													   <span v-else>
+													   <span th:if="${currentuserperms}=='admin' or ${currentuserauthority}>0">
+													   <el-button size="mini" style="float: right" icon="el-icon-delete" @click="toDeleteReply(reply.grouppostreplyid)"> 删除</el-button>
+													   </span></span>
+												   </h6>
+													</div>
+													<el-divider content-position="right">{{reply.addtime}}</el-divider>
+											</div>
+													
+										</el-card>
+							</div>
+									
+									
+						</div>
+						<footer>
+								
+							</footer>
+                    
+                    </div>
+                </el-main>
+			</el-container>
+			
+			
+		</div>
+    
+</div>
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+		input:'',
+        data: {
+        	currentUserID:[[${currentuserid}]],
+        	input:"",
+			async:false,
+        	ReplyAdd:"",
+            search_word: "",
+						<!-- 从Group,GroupPost表中提取数据 -->
+            Post:{
+							usrname:"lqy",
+							Title:"这本书真好看",
+							content:"今天风和日丽"
+						},
+						Reply:{
+							usrname:"lqy",
+							content:"我觉得不错我觉得不错我觉得不错我觉得不错我觉得不错我觉得不错我觉得不错我觉得不错"
+						},
+			Users:[]
+        },
+        methods:{
+			show() {
+				var value = document.getElementById("div1").style.display;
+				if(value=="none")
+				{
+					document.getElementById("div1").style.display="block";
+				}
+				else
+					document.getElementById("div1").style.display="none";
+			},
+          	back(){
+          		const groupid=document.getElementById("groupid").value;
+          		window.location.href="/group/"+groupid;
+			},
+			nologin(){
+				window.location.href="/nologin_add";
+			},
+			toAdd(){
+				const userid=document.getElementById("userid").value;
+				const grouppostid=document.getElementById("grouppostid").value;
+				const content = this.ReplyAdd;
+				window.location.href="/AddGroupPostReply?userid="+userid+"&grouppostid="+grouppostid+"&content="+content;
+			},
+			toDeleteReply(id) {
+				var res = confirm("确认删除吗？删除操作无法恢复");
+				if (res==true){
+					alert("删除成功");
+					window.location.href="/DeleteGroupPostReply?grouppostreplyid="+id;
+				}
+			},
+			toDeletePost(){
+				const id=document.getElementById("grouppostid").value;
+				var res = confirm("确认删除吗？删除操作无法恢复");
+				if (res==true){
+					alert("删除成功");
+					window.location.href="/DeleteGroupPost?grouppostid="+id;
+				}
+			},
+			top(){
+				const id=document.getElementById("grouppostid").value;
+				window.location.href='/AddTopPost?grouppostid='+id;
+			},
+			good(){
+				const id=document.getElementById("grouppostid").value;
+				window.location.href='/AddEssencePost?grouppostid='+id;
+			},
+			notop(){
+				const id=document.getElementById("grouppostid").value;
+				window.location.href='/DeleteTopPost?grouppostid='+id;
+			},
+			nogood(){
+				const id=document.getElementById("grouppostid").value;
+				window.location.href='/DeleteEssencePost?grouppostid='+id;
+			}
+		},
+		async created(){
+			const grouppostid=document.getElementById("grouppostid").value;
+			const _this = this;
+			await axios.get('/queryGroupPostReply_Userid_to_Username/' + grouppostid).then(function (resp) {
+						_this.Users = resp.data;
+
+					}
+			);
+
+			await axios.get('/queryGroupPostReply/' + grouppostid).then(function (resp) {
+						_this.Reply = resp.data;
+						for (var i = 0; i < _this.Reply.length; i++) {
+							_this.Reply[i].username = _this.Users[i].username;
+
+						}
+					}
+			);
+			console.log(_this.Reply);
+        }
+
+    });
+</script>
+</body>
+</html>

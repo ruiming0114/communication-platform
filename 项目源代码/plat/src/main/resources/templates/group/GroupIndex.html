@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+				<link rel="stylesheet" href="../index/static/css/index.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+    <style type="text/css" >
+	.text {
+	    font-size: 14px;
+	  }
+	a{
+		color: black;
+		text-decoration: none;
+	}
+	a:active,a:hover{
+		color: #555555;
+	}
+	  .item {
+	    margin-bottom: 18px;
+	  }
+	
+	  .clearfix:before,
+	  .clearfix:after {
+	    display: table;
+	    content: "";
+	  }
+	  .clearfix:after {
+	    clear: both
+	  }
+
+
+		#SelectedGroup{
+			margin-left: 950px;
+			
+		}
+		#SelectedPost{
+			float: left;
+		}
+</style>
+
+</head>
+<body style="margin: 0;">
+<div id="app">
+    <div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+    <div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+        <div id = "box">
+          <el-container direction="vertical">
+            <el-header style="background-color: white;text-align: left;opacity: 0.95;">
+              <h1 style="color: violet;font-size:35px;margin-left: 5px; margin-top: 3px;">小 组 G r o u p</h1>
+            </el-header>
+                    <el-main style="background-color: white;text-align: left;opacity: 0.95;min-height: 650px">
+                        <div id="forms">
+                          <div id="content">
+                            <div id="SelectedPost">
+                                    <el-card class="box-card" style="width: 850px;margin-left: 20px;opacity: 0.85;">
+                                      <div slot="header" class="clearfix">
+                                        <span style="font-size: 130%;">精选帖子</span>
+                                      </div>
+                                      <div v-for="o in SelectedPost" :key="o" class="text item" >
+                                        <span >
+                                            <a @click="gopost(o.grouppostid)" style="cursor:pointer"><span style="max-width: 700px ;font-size: 120%;">{{o.title}}</span>
+                                   <br>
+                                          <span style="width:730px;overflow:hidden;text-overflow:ellipsis;display:block" > {{o.content}}</span>
+                                            </a></span>
+                                        <el-divider></el-divider>
+                                      </div>
+                                    </el-card>
+                    
+                            </div>
+
+                            <div id="SelectedGroup">
+                                <span>
+                                    <el-input
+                                            placeholder="搜索小组"
+                                            v-model="input1"
+                                            style="width: 300px;height: 10px">
+                                    <el-button slot="append" icon="el-icon-search" @click="searchgroup"></el-button>
+                                </el-input>
+                                </span>
+                                <div>
+                            <span th:if="${session.loginUser}!=null">
+								<a class="myButton" @click="toadd">新 建 小 组 </a>
+							</span>
+                                <span th:if="${session.loginUser}==null">
+								<a class="myButton" @click="nologin">新 建 小 组 </a>
+							</span></div>
+                                <br>
+                                <br>
+
+                                <el-card class="box-card" style="width: 300px;opacity: 0.85;" >
+                                  <div slot="header" class="clearfix">
+                                    <span style="font-size: 130%;">精选小组</span>
+                                  </div>
+                                  <div v-for="o in SelectedGroup" :key="o" class="text item">
+                                    <a @click="gogroup(o.groupid)" style="cursor:pointer;width:280px;overflow:hidden;text-overflow:ellipsis;display:block">{{o.groupname}} </a>
+                                  </div>
+                                </el-card>
+                            </div>
+                        </div>
+                        </div>
+                    </el-main>
+          </el-container>
+          
+          
+        </div>
+    
+</div>
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+            input:'',
+            input1:"",
+            search_word: "",
+						<!-- 从Group,GroupPost表中提取数据 -->
+            SelectedPost: [{
+							title:"帖子",
+							content:"hello"
+						}
+						],
+            SelectedGroup:['1','2','3']
+        },
+        methods:{
+            gopost(id){
+                window.location.href="/grouppost/"+id;
+            },
+            gogroup(id){
+                window.location.href="/group/"+id;
+            },
+            nologin(){
+                window.location.href="/nologin_addGroup";
+            },
+            toadd(){
+                window.location.href="/toAddGroup";
+            },
+            searchgroup(){
+                var s = this.input1;
+                if (s.length==0){
+                    alert("请输入搜索内容");
+                }
+                else {
+                    window.location.href='/toCheckGroup/'+s;
+                }
+            }
+        },
+        created(){
+            const _this=this;
+            axios.get('/queryRecommendGroupPost',{}).then(function (resp) {
+                    _this.SelectedPost=resp.data;
+                }
+            );
+            axios.get('/queryRecommendGroup',{}).then(function (resp) {
+                    _this.SelectedGroup=resp.data;
+                }
+            );
+        }
+
+    });
+</script>
+</body>
+</html>

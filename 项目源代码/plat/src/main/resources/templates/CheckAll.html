@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+	<meta name="referrer" content="no-referrer"/>
+    <title>书荫光影-书虫影迷聚集地</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<link rel="stylesheet" th:href="@{/css/TopicIndex.css}"/>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<style type="text/css" >
+	.el-header, .el-footer {
+	  background-color: #B3C0D1;
+	  color: #333;
+	  text-align: center;
+	  line-height: 60px;
+	  }
+	  .el-main {
+		display: block;
+	  background-color: #E9EEF3;
+	  color: #333;
+		min-height: 700px;	
+	  }
+	
+	</style>
+
+</head>
+<body style="margin: 0;">
+<div id="app">
+
+	<div th:if="${session.loginUser}!=null" th:insert="~{commons/common::topbar-login}"></div>
+	<div th:if="${session.loginUser}==null" th:insert="~{commons/common::topbar-nologin}"></div>
+
+	<input type="hidden" id="name" th:value="${name}">
+				<div id = "box">
+					<el-container direction="vertical">
+						<el-main style="background-color: white;text-align: left;opacity: 0.95;">
+						<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+							<h1 style="color: teal; font-size:35px;margin-left: 5px; margin-top: 3px;">图 书 B o o k</h1>
+						</el-header>
+
+							<div id="forms1">
+								<br>
+								<div id="result1" v-if="isSearch">
+									<div class="block">
+									<el-table :data="books"
+										 style="width: 900px;margin-left: 150px;">
+										<el-table-column prop="bookid" width="150px" v-if="show">
+										</el-table-column>
+											 <el-table-column  label="封面图片" width="150px">
+												 <template slot-scope="scope">
+													 <el-image
+															 style="width: 80px; height: 120px"
+															 :src="scope.row.bookimgpath"
+															 :preview-src-list="srcList">
+													 </el-image>
+												 </template>
+												  </el-table-column>
+										  <el-table-column prop="bookname" label="书名" width="150px">
+												</el-table-column>
+												<el-table-column prop="author" label="作者" width="150px">
+												</el-table-column>
+												<el-table-column prop="totalscore" label="得分" width="150px">
+												</el-table-column>
+												<el-table-column  width="150px">
+													<template slot-scope="scope">
+														<el-button size="mini" @click="toBook(scope.row)" class="el-icon-reading"> 查看</el-button>
+													</template>
+												</el-table-column>
+									　　</el-table>
+
+									</div>
+								</div>
+							</div>
+							<el-divider></el-divider>
+
+
+						<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+							<h1 style="color:yellowgreen;font-size:35px;margin-left: 5px; margin-top: 3px;">影 视 V i d e o</h1>
+						</el-header>
+							<div id="forms2">
+								<br>
+								<div id="result2" v-if="isSearch">
+									<div class="block">
+										<el-table :data="videos"
+												  style="width: 900px;margin-left: 150px;"
+										>
+											<el-table-column prop="videoid" width="150px" v-if="show">
+											</el-table-column>
+											<el-table-column  label="海报图片" width="150px">
+												<template slot-scope="scope">
+													<el-image
+															style="width: 80px; height: 120px"
+															:src="scope.row.videoimgpath"
+															:preview-src-list="srcList">
+													</el-image>
+												</template>
+											</el-table-column>
+											<el-table-column prop="videoname" label="剧名" width="150px">
+											</el-table-column>
+											<el-table-column prop="director" label="导演" width="150px">
+											</el-table-column>
+											<el-table-column prop="totalscore" label="得分" width="150px">
+											</el-table-column>
+											<el-table-column  width="150px">
+												<template slot-scope="scope">
+													<el-button size="mini" @click="toVideo(scope.row)" class="el-icon-video-camera"> 查看</el-button>
+												</template>
+											</el-table-column>
+										</el-table>
+									</div>
+								</div>
+							</div>
+
+							<el-divider></el-divider>
+
+							<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+								<h1 style="color: tomato; font-size:35px;margin-left: 5px; margin-top: 3px;">话 题 T o p i c</h1>
+							</el-header>
+							<br>
+							<div v-if="topics.length==0">
+								<span style="color: darkgrey;margin-left: 500px;font-size: 87%;opacity: 0.95;" >暂无数据</span>
+							</div>
+							<div v-else>
+								<div v-for="topic in topics">
+									<el-card class="box-card" style="margin-left: 150px;width: 950px">
+										<div slot="header" class="clearfix">
+											<span>{{topic.title}}</span>
+											<el-button round style="float: right;" size="medium" class="el-icon-chat-dot-round" @click="go(topic.topicid)">
+												点击查看话题
+											</el-button>
+										</div>
+										<div>
+											{{topic.intro}}
+										</div>
+									</el-card>
+									</br>
+								</div>
+				</div>
+								<style>
+									.text {
+										font-size: 14px;
+									}
+									.item {
+										margin-bottom: 18px;
+
+									}
+
+									.clearfix:before,
+									.clearfix:after {
+										display: table;
+										content: "";
+									}
+									.clearfix:after {
+										clear: both
+									}
+
+									.box-card {
+										width: 480px;
+
+									}
+								</style>
+
+
+							<el-divider></el-divider>
+
+							<el-header style="background-color: white;text-align: left;opacity: 0.95;">
+								<h1 style="color: violet;font-size:35px;margin-left: 5px; margin-top: 3px;">小 组 G r o u p</h1>
+							</el-header>
+								<div id="forms">
+									</br>
+									<div id="result" v-if="isSearch">
+										<div class="block">
+											<el-table :data="groups"
+													  style="width: 900px;margin-left: 150px;min-height: 200px"
+											>
+												<el-table-column prop="groupid" width="150px" v-if="show">
+												</el-table-column>
+												<el-table-column prop="groupname" label="小组名" width="150px">
+												</el-table-column>
+												<el-table-column prop="intro" label="小组简介" width="450px">
+												</el-table-column>
+												<el-table-column  width="150px">
+													<template slot-scope="scope">
+														<el-button size="mini" @click="toGroup(scope.row)" class="el-icon-monitor"> 查看</el-button>
+													</template>
+												</el-table-column>
+												　　</el-table>
+
+										</div>
+									</div>
+
+
+								</div>
+							</el-main>
+						</el-main>
+					</el-container>
+					
+					
+				</div>
+		
+</div>
+
+<script type="text/javascript">
+    const vm = new Vue({
+        el:'#app',
+        data: {
+			input:'',
+			show: false,
+					  isSearch:true,
+			topics:[],
+			books:[],
+			videos:[],
+			groups:[],
+        },
+        methods: {
+			toBook(row) {
+				window.location.href = "/book/" + row.bookid;
+			},
+			toVideo(row) {
+				window.location.href = "/video/" + row.videoid;
+			},
+			go(id){
+				window.location.href="/topic/"+id;
+			},
+			toGroup(row){
+				window.location.href="/group/"+row.groupid;
+			},
+		},
+        created(){
+        	var name = document.getElementById("name").value;
+			const _this = this;
+			axios.get('/checkBookInPage/'+name+'/1/3').then(function (resp) {
+						_this.books = resp.data;
+					}
+			);
+			axios.get('/checkVideoInPage/'+name+'/1/3').then(function (resp) {
+						_this.videos = resp.data;
+					}
+			);
+			axios.get('/queryGroupByName/'+name+'/1/3').then(function (resp) {
+						_this.groups = resp.data;
+					}
+			);
+			axios.get('/checkTopicList/' +name).then(function (resp) {
+						_this.topics = resp.data;
+						if (_this.topics.length>3){
+							_this.topics=_this.topics.subarray(0,3);
+						}
+					}
+			);
+		}
+
+    });
+</script>
+</body>
+</html>
